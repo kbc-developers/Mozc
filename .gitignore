@@ -1,0 +1,13 @@
+.svn
+.orig
+.gclient
+.gclient_entries
+src/third_party/findbug/
+src/third_party/fontTools/
+src/third_party/gmock/
+src/third_party/gtest/
+src/third_party/gyp/
+src/third_party/japanese_usage_dictionary/
+src/third_party/jsoncpp/
+src/third_party/protobuf/
+src/third_party/zlib/
