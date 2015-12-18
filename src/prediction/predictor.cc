@@ -29,6 +29,7 @@
 
 #include "prediction/predictor.h"
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -80,9 +81,10 @@ BasePredictor::BasePredictor(PredictorInterface *dictionary_predictor,
 
 BasePredictor::~BasePredictor() {}
 
-void BasePredictor::Finish(Segments *segments) {
-  user_history_predictor_->Finish(segments);
-  dictionary_predictor_->Finish(segments);
+void BasePredictor::Finish(const ConversionRequest &request,
+                           Segments *segments) {
+  user_history_predictor_->Finish(request, segments);
+  dictionary_predictor_->Finish(request, segments);
 
   if (segments->conversion_segments_size() < 1 ||
       segments->request_type() == Segments::CONVERSION) {

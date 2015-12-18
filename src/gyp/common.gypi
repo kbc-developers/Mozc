@@ -225,9 +225,9 @@
     # for the background information.
     'use_libprotobuf%': 0,
 
-    # use_libzinnia represents if zinnia library is used or not.
-    # This option is only for Linux.
-    'use_libzinnia%': 1,
+    # Set '1' to use system-instaleld zinnia library.  Otherwise
+    # zinnia will be built from source as needed.
+    'use_libzinnia%': 0,
 
     # use_libxml represents if libxml library is used or not.
     # This option is only for Linux.
@@ -679,10 +679,14 @@
     ],
     'conditions': [
       ['OS=="win"', {
+        'variables': {
+          'wtl_dir': '<(additional_third_party_dir)/wtl',
+        },
         'defines': [
           'COMPILER_MSVC',
           'BUILD_MOZC',  # for ime_shared library
           'ID_TRACE_LEVEL=1',
+          'NOMINMAX',
           'OS_WIN',
           'UNICODE',
           'WIN32',
@@ -703,7 +707,7 @@
         ],
         'include_dirs': [
           '<@(msvs_includes)',
-          '<(additional_third_party_dir)/wtl/files/include',
+          '<(wtl_dir)/include',
         ],
         'msvs_cygwin_shell': 0,
         'msvs_disabled_warnings': ['<@(msvc_disabled_warnings)'],  # /wdXXXX

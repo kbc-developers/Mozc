@@ -30,11 +30,12 @@
 #ifndef MOZC_CONFIG_CHARACTER_FORM_MANAGER_H_
 #define MOZC_CONFIG_CHARACTER_FORM_MANAGER_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <utility>
+
 #include "base/port.h"
-#include "base/scoped_ptr.h"
 #include "protocol/config.pb.h"
 
 namespace mozc {
@@ -109,8 +110,8 @@ class CharacterFormManager {
   // Loads Default rules.
   void SetDefaultRule();
 
-  // Reload explicitly.
-  void Reload();
+  // Reload config explicitly.
+  void ReloadConfig(const Config &config);
 
   // Utility function: pass character form.
   static void ConvertWidth(const string &input, string *output,
@@ -145,7 +146,8 @@ class CharacterFormManager {
 
   CharacterFormManager();
   ~CharacterFormManager();
-  scoped_ptr<Data> data_;
+
+  std::unique_ptr<Data> data_;
 
   DISALLOW_COPY_AND_ASSIGN(CharacterFormManager);
 };

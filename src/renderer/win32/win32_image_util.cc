@@ -29,8 +29,6 @@
 
 #include "renderer/win32/win32_image_util.h"
 
-#include <Shlwapi.h>
-
 #define _ATL_NO_AUTOMATIC_NAMESPACE
 #define _WTL_NO_AUTOMATIC_NAMESPACE
 #include <atlbase.h>
@@ -42,16 +40,9 @@
 #include <bitset>
 #include <vector>
 
+#include "base/logging.h"
 #include "base/stl_util.h"
 #include "base/util.h"
-
-// remove annoying macros
-#ifdef min
-#undef min
-#endif  // min
-#ifdef max
-#undef max
-#endif  // max
 
 namespace mozc {
 namespace renderer {

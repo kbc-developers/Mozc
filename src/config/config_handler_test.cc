@@ -283,7 +283,7 @@ TEST_F(ConfigHandlerTest, LoadTestConfig) {
 #ifdef OS_WIN
     // Reset the file attributes since it may contain FILE_ATTRIBUTE_READONLY.
     wstring wdest_path;
-    Util::UTF8ToWide(dest_path.c_str(), &wdest_path);
+    Util::UTF8ToWide(dest_path, &wdest_path);
     ::SetFileAttributesW(wdest_path.c_str(), FILE_ATTRIBUTE_NORMAL);
 #endif  // OS_WIN
 
@@ -345,5 +345,12 @@ TEST_F(ConfigHandlerTest, GetDefaultConfig) {
   EXPECT_TRUE(output.general_config().has_upload_usage_stats());
   EXPECT_TRUE(output.general_config().upload_usage_stats());
 #endif  // OS_ANDROID && CHANNEL_DEV
+}
+
+TEST_F(ConfigHandlerTest, DefaultConfig) {
+  config::Config config;
+  config::ConfigHandler::GetDefaultConfig(&config);
+  EXPECT_EQ(config.DebugString(),
+            config::ConfigHandler::DefaultConfig().DebugString());
 }
 }  // namespace mozc

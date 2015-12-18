@@ -30,12 +30,12 @@
 #include "converter/connector.h"
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "base/file_util.h"
 #include "base/mmap.h"
-#include "base/scoped_ptr.h"
 #include "data_manager/connection_file_reader.h"
 #include "testing/base/public/gunit.h"
 
@@ -60,7 +60,7 @@ TEST(ConnectorTest, CompareWithRawData) {
       FLAGS_test_srcdir, kTestConnectionDataImagePath);
   Mmap cmmap;
   ASSERT_TRUE(cmmap.Open(path.c_str())) << "Failed to open image: " << path;
-  scoped_ptr<Connector> connector(
+  std::unique_ptr<Connector> connector(
       new Connector(cmmap.begin(), cmmap.size(), 256));
   ASSERT_EQ(1, connector->GetResolution());
 
@@ -78,7 +78,7 @@ TEST(ConnectorTest, CompareWithRawData) {
 
   for (int trial = 0; trial < 3; ++trial) {
     // Lookup in random order for a few times.
-    random_shuffle(data.begin(), data.end());
+    std::random_shuffle(data.begin(), data.end());
     for (size_t i = 0; i < data.size(); ++i) {
       int actual = connector->GetTransitionCost(data[i].rid, data[i].lid);
       EXPECT_EQ(data[i].cost, actual);

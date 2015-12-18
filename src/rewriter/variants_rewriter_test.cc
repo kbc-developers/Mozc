@@ -29,6 +29,7 @@
 
 #include "rewriter/variants_rewriter.h"
 
+#include <memory>
 #include <string>
 
 #include "base/logging.h"
@@ -37,14 +38,13 @@
 #include "base/util.h"
 #include "config/character_form_manager.h"
 #include "config/config_handler.h"
-#include "converter/conversion_request.h"
 #include "converter/segments.h"
 #include "data_manager/user_pos_manager.h"
 #include "dictionary/pos_matcher.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
+#include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
-
-DECLARE_string(test_tmpdir);
 
 using mozc::config::CharacterFormManager;
 using mozc::config::Config;
@@ -109,7 +109,7 @@ class VariantsRewriterTest : public testing::Test {
 };
 
 TEST_F(VariantsRewriterTest, RewriteTest) {
-  scoped_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
+  std::unique_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
   Segments segments;
   const ConversionRequest request;
 
@@ -249,7 +249,7 @@ TEST_F(VariantsRewriterTest, RewriteTest) {
 }
 
 TEST_F(VariantsRewriterTest, RewriteTestManyCandidates) {
-  scoped_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
+  std::unique_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
   Segments segments;
   const ConversionRequest request;
   Segment *seg = segments.push_back_segment();
@@ -654,7 +654,7 @@ TEST_F(VariantsRewriterTest, SetDescriptionForPrediction) {
 TEST_F(VariantsRewriterTest, RewriteForConversion) {
   CharacterFormManager *character_form_manager =
       CharacterFormManager::GetCharacterFormManager();
-  scoped_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
+  std::unique_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
   const ConversionRequest request;
   {
     Segments segments;
@@ -712,7 +712,7 @@ TEST_F(VariantsRewriterTest, RewriteForConversion) {
 TEST_F(VariantsRewriterTest, RewriteForPrediction) {
   CharacterFormManager *character_form_manager =
       CharacterFormManager::GetCharacterFormManager();
-  scoped_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
+  std::unique_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
   const ConversionRequest request;
   {
     Segments segments;
@@ -752,7 +752,7 @@ TEST_F(VariantsRewriterTest, RewriteForPrediction) {
 TEST_F(VariantsRewriterTest, RewriteForSuggestion) {
   CharacterFormManager *character_form_manager =
       CharacterFormManager::GetCharacterFormManager();
-  scoped_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
+  std::unique_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
   const ConversionRequest request;
   {
     Segments segments;
@@ -827,7 +827,7 @@ TEST_F(VariantsRewriterTest, RewriteForSuggestion) {
 }
 
 TEST_F(VariantsRewriterTest, Capability) {
-  scoped_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
+  std::unique_ptr<VariantsRewriter> rewriter(CreateVariantsRewriter());
   const ConversionRequest request;
   EXPECT_EQ(RewriterInterface::ALL, rewriter->capability(request));
 }

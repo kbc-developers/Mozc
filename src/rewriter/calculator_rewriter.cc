@@ -35,11 +35,11 @@
 #include "base/logging.h"
 #include "base/util.h"
 #include "config/config_handler.h"
-#include "converter/conversion_request.h"
 #include "converter/converter_interface.h"
 #include "converter/segments.h"
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
 #include "rewriter/calculator/calculator_interface.h"
 
 namespace mozc {
@@ -67,7 +67,7 @@ int CalculatorRewriter::capability(const ConversionRequest &request) const {
 //            a valid expression.
 bool CalculatorRewriter::Rewrite(const ConversionRequest &request,
                                  Segments *segments) const {
-  if (!GET_CONFIG(use_calculator)) {
+  if (!request.config().use_calculator()) {
     return false;
   }
 

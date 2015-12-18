@@ -29,6 +29,7 @@
 
 #include "chrome/nacl/url_loader_util.h"
 
+#include <algorithm>
 #include <memory>
 
 #include <ppapi/c/pp_file_info.h>
@@ -44,7 +45,6 @@
 
 #include "base/logging.h"
 #include "base/port.h"
-#include "base/scoped_ptr.h"
 
 using std::unique_ptr;
 

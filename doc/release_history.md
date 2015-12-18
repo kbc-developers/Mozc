@@ -1,6 +1,122 @@
 Release History
 ===============
 
+2.17.2124.102 - 2.17.2240.102 / *2015-09-20* - *2015-11-15*
+--------------------------------------------------
+You can check out Mozc [2.17.2240.102](https://github.com/google/mozc/commit/95de40fa884d693172605e7283ec82233a908b29) as follows.
+
+```
+git clone https://github.com/google/mozc.git
+cd mozc
+git checkout 95de40fa884d693172605e7283ec82233a908b29
+git submodule update --init --recursive
+```
+
+Summary of changes between [2.17.2124.102](https://github.com/google/mozc/commit/0943e518ebff9ddd9390d0ec29509cb0096ac240) and [2.17.2240.102](https://github.com/google/mozc/commit/95de40fa884d693172605e7283ec82233a908b29) as follows.
+
+  * Third party libraries:
+    * gyp: [cdf037c1 -> e2e928ba](https://chromium.googlesource.com/external/gyp/+log/cdf037c1edc0ba3b5d25f8e3973661efe00980cc..e2e928bacd07fead99a18cb08d64cb24e131d3e5)
+    * zinnia: [44dddcf9 -> 814a49b0](https://github.com/taku910/zinnia/compare/44dddcf96c0970a806d666030295706f45cbd045...814a49b031709b34d23898bce47f08dc1b554ec8)
+    * zlib: [50893291](https://github.com/madler/zlib/commit/50893291621658f355bc5b4d450a8d06a563053d) was added to submodules for NaCl build.
+  * Build related changes:
+    * Linux-only build option ```-j```/```--jobs``` was deprecated by b393fbdc346a5243ad35eb559d4468a274f2d2d2.  See its commit log on how to work around it.
+    * Pepper 45 SDK is required to build Mozc for NaCl.
+    * Docker directory id moved from ```mozc/src/docker/``` to ```mozc/docker/``` by cfe9a2a5c7576a01fdbbadca43760496a9405ece.
+    * Enabled continuous build for Android, NaCl, and Linux-desktop on [Travis CI](https://travis-ci.org).
+    * Enabled continuous test for OS X and Linux-desktop on [Travis CI](https://travis-ci.org).
+    * ```REGISTER_MODULE_INITIALIZER```, ```REGISTER_MODULE_RELOADER```, ```REGISTER_MODULE_SHUTDOWN_HANDLER```, and ```REGISTER_MODULE_FINALIZER``` were deprecated since they are known as bug-prone.  Deprecating them allows us to reduce the number of use of ```Singleton<T>```, which is also known as bug-prone.
+    * [#320](https://github.com/google/mozc/pull/320): ```InitGoogle``` was renamed to ```mozc::InitMozc``` and now declared in ```base/init_mozc.h```.  If you have relied on ```InitGoogle```, then you need to 1) include ```base/init_mozc.h``` and 2) replace ```InitGoogle``` with ```mozc::InitMozc```.
+  * Major changes:
+    * DateRewriter is now able to handle 3-digit.  For instance, when converting ```123``` you will see additional candidates such as ```1:23``` and ```01/23```.  See the commit message of f2cc056fd289bb498703a451b163eb73de217c91 and its unittests for details.
+  * Known issues:
+    * [#263](https://github.com/google/mozc/issues/263): Voiced sound marks on the key pad is not placed at correct position in Android
+    * [#273](https://github.com/google/mozc/issues/273): Compilation errors in Android arm64 and mips64 build
+    * [#317](https://github.com/google/mozc/issues/317): session_handler_scenario_test is flaky in Linux build on Travis-CI
+  * Fixed issues:
+    * [#27](https://github.com/google/mozc/issues/27): build fail of ```base/iconv.cc```, FreeBSD
+    * [#219](https://github.com/google/mozc/issues/219): Deprecate ```base/scoped_ptr.h```
+    * [#252](https://github.com/google/mozc/issues/252): Remove dependency on iconv
+    * [#328](https://github.com/google/mozc/issues/328): Partial commit clears remaining composing text in some cases
+    * [#331](https://github.com/google/mozc/issues/331): Predictions on mobile can be too different from conversion result
+    * [#332](https://github.com/google/mozc/issues/332): Clearing user dictionary on the preference app will not take effect immediately
+  * Total commits:
+    * [154 commits](https://github.com/google/mozc/compare/0943e518ebff9ddd9390d0ec29509cb0096ac240%5E...95de40fa884d693172605e7283ec82233a908b29).
+
+
+2.17.2112.102 - 2.17.2123.102 / *2015-09-05* - *2015-09-19*
+--------------------------------------------------
+You can check out Mozc [2.17.2123.102](https://github.com/google/mozc/commit/e398317a086a78c0cf0004505eb8f56586e925b2) as follows.
+
+```
+git clone https://github.com/google/mozc.git
+cd mozc
+git checkout e398317a086a78c0cf0004505eb8f56586e925b2
+git submodule update --init --recursive
+```
+
+Summary of changes between [2.17.2112.102](https://github.com/google/mozc/commit/25ae18a0ed595e5fee4bf546f21fbde2386a3da8) and [2.17.2123.102](https://github.com/google/mozc/commit/e398317a086a78c0cf0004505eb8f56586e925b2) as follows.
+
+  * Third party libraries:
+    * breakpad: [962f1b0e (r1391) -> d2904bb4 (r1419)](https://chromium.googlesource.com/breakpad/breakpad/+log/962f1b0e60eca939232dc0d46780da4fdbbcfd85%5E..d2904bb42181bc32c17b26ac4a0604c0e57473cc/)
+    * gtest: [102b5048 (r700) -> 1d53731f (r707)](https://github.com/google/googletest/compare/102b50483a4b515a94a5b1c75db468eb071cf172%5E...1d53731f2c210557caab5660dbe2c578dce6114f)
+    * gmock: [61adbcc5 (r501) -> d478a1f4 (r513)](https://github.com/google/googlemock/compare/61adbcc5c6b8e0385e3e2bf4262771d20a375002%5E...d478a1f46d51ac2baa3f3b3896139897f24dc2d1)
+    * zinnia: [b84ad858 (0.0.4) -> 44dddcf9 (0.0.6)](https://github.com/taku910/zinnia/compare/7bdc645d7212c51d4bba234acea9ae0c6da2bbb8...44dddcf96c0970a806d666030295706f45cbd045)
+    * Repository URL changes:
+      * [GoogleCode] googlemock -> [GitHub] google/googlemock
+      * [GoogleCode] googletest -> [GitHub] google/googletest
+      * [GoogleCode] google-breakpad -> chromium.googlesource.com/breakpad/breakpad
+      * [GoogleCode] japanese-usage-dictionary -> [GitHub] hiroyuki-komatsu/japanese-usage-dictionary
+      * [SourceForge] zinnia -> [GitHub] taku910/zinnia
+    * `src/DEPS` was deprecated and removed.  We use `git submodule` to track and check out dependent third party source code.
+    * WTL is directly imported under `src/third_party` so as not to depend on subversion.
+  * Build related changes:
+    * Zinnia is now built from source and linked statically by default.  To link to system-installed Zinnia, specify `GYP_DEFINES="use_libzinnia=1"`.  Note that `build_mozc.py gyp --use_zinnia` is also deprecated.
+  * Major changes:
+    * Windows build now supports hand-writing with Zinnia.
+  * Known issues:
+    * [#263](https://github.com/google/mozc/issues/263): Voiced sound marks on the key pad is not placed at correct position in Android
+    * [#273](https://github.com/google/mozc/issues/273): Compilation errors in Android arm64 and mips64 build
+  * Fixed issues:
+    * [#299](https://github.com/google/mozc/issues/299): Stop depending on subversion repositories in DEPS file
+    * [#300](https://github.com/google/mozc/pull/300): Replace gclient/DEPS with git sub-modules
+  * Total commits:
+    * [16 commits](https://github.com/google/mozc/compare/25ae18a0ed595e5fee4bf546f21fbde2386a3da8%5E...e398317a086a78c0cf0004505eb8f56586e925b2).
+
+
+2.17.2094.102 - 2.17.2111.102 / *2015-05-10* - *2015-08-15*
+--------------------------------------------------
+You can check out Mozc [2.17.2111.102](https://github.com/google/mozc/commit/d7b6196aeac52dd908ca051ba65e97b389f4503a) as follows.
+
+```
+gclient sync --revision=d7b6196aeac52dd908ca051ba65e97b389f4503a
+```
+
+Summary of changes between [2.17.2094.102](https://github.com/google/mozc/commit/c57a78e2b84880718f2621b9e8e4791419bee923) and [2.17.2111.102](https://github.com/google/mozc/commit/d7b6196aeac52dd908ca051ba65e97b389f4503a).
+
+  * DEPS changes:
+    * none
+  * Build related changes:
+    * Android build requires NDK r10e.
+    * `*.proto` files are moved to `src/protocol/` to simplify build dependency.  Downstream projects may need to update include path and/or `.gyp` file accordingly.
+    * Commit hashes between 2.17.2098.102 and 2.17.2106.102 were once changed [#292](https://github.com/google/mozc/issues/292).
+    * Possible build failures in releases from 2.17.2099.102 (dbe800583e5676896ce603494ef3b306f38f7b85) to 2.17.2106.102 (3648b9bf06d5d9b36bed2425640bfd18ae05b588) due to [#295](https://github.com/google/mozc/issues/295).
+  * Major changes:
+    * ibus-mozc no longer enables `undo-commit` unless `IBUS_CAP_SURROUNDING_TEXT` is specified (0796f5143400e2beb3d18156ae426f8ce06b0c0d).
+    * ibus-mozc no longer tries to align suggestion window to the left edge of the composing text (9fbcdd5e27cf26ff16d72bd2d92f269334912ede).
+  * Known issues:
+    * [#263](https://github.com/google/mozc/issues/263): Voiced sound marks on the key pad is not placed at correct position in Android
+    * [#273](https://github.com/google/mozc/issues/273): Compilation errors in Android arm64 and mips64 build
+  * Fixed issues:
+    * [#243](https://github.com/google/mozc/issues/243): ibus predict window is shown at the previous cursor position
+      * [Mozilla Bug 1120851](https://bugzilla.mozilla.org/show_bug.cgi?id=1120851): Candidate window sometimes doesn't set correct position with ibus + mozc when starting composition
+    * [#254](https://github.com/google/mozc/issues/254): Preedit and candidate changes buffer modification flag
+    * [#291](https://github.com/google/mozc/issues/291): Fix a typo
+    * [#295](https://github.com/google/mozc/issues/295): Possible build failure due to missing dependency on `commands_proto` from `key_info_util`
+    * [#296](https://github.com/google/mozc/issues/296): ibus-mozc should enable undo-commit if and only if `IBUS_CAP_SURROUNDING_TEXT` is set
+  * Total commits:
+    * [24 commits](https://github.com/google/mozc/compare/c57a78e2b84880718f2621b9e8e4791419bee923...d7b6196aeac52dd908ca051ba65e97b389f4503a).
+
+
 2.17.2073.102 - 2.17.2095.102 / *2015-04-11* - *2015-05-10*
 --------------------------------------------------
 You can check out Mozc [2.17.2095.102](https://github.com/google/mozc/commit/321e0656b0f2e233ab1c164bd86c58568c9e92f2) as follows.

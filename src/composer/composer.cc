@@ -31,8 +31,8 @@
 
 #include "composer/composer.h"
 
+#include "base/flags.h"
 #include "base/logging.h"
-#include "base/singleton.h"
 #include "base/util.h"
 #include "composer/internal/composition.h"
 #include "composer/internal/composition_input.h"
@@ -763,7 +763,7 @@ string *GetBaseQueryForPrediction(string *asis_query,
     return trimed_query;
   }
 }
-}  // anonymous namespace
+}  // namespace
 
 void Composer::GetQueryForPrediction(string *output) const {
   string asis_query;
@@ -1021,7 +1021,7 @@ enum Script {
 bool IsAlphabetOrNumber(const Script script) {
   return (script == ALPHABET) || (script == NUMBER);
 }
-}  // anonymous namespace
+}  // namespace
 
 // static
 bool Composer::TransformCharactersForNumbers(string *query) {

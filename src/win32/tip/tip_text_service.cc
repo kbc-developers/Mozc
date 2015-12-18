@@ -41,9 +41,11 @@
 #include <unordered_map>
 
 #include "base/const.h"
+#include "base/file_util.h"
 #include "base/logging.h"
 #include "base/port.h"
 #include "base/process.h"
+#include "base/system_util.h"
 #include "base/update_util.h"
 #include "base/util.h"
 #include "base/win_util.h"
@@ -99,7 +101,7 @@ const UINT kUpdateUIMessage = WM_USER;
 #ifdef GOOGLE_JAPANESE_INPUT_BUILD
 
 const char kHelpUrl[] = "http://www.google.com/support/ime/japanese";
-const char kLogFileName[] = "GoogleJapaneseInput_tsf_ui";
+const char kLogFileName[] = "GoogleJapaneseInput_tsf_ui.log";
 const wchar_t kTaskWindowClassName[] =
     L"Google Japanese Input Task Message Window";
 
@@ -126,7 +128,7 @@ const GUID kTipFunctionProvider = {
 #else
 
 const char kHelpUrl[] = "http://code.google.com/p/mozc/";
-const char kLogFileName[] = "Mozc_tsf_ui";
+const char kLogFileName[] = "Mozc_tsf_ui.log";
 const wchar_t kTaskWindowClassName[] = L"Mozc Immersive Task Message Window";
 
 // {F16B7D92-84B0-4AC6-A35B-06EA77180A18}
@@ -150,11 +152,6 @@ const GUID kTipFunctionProvider = {
 };
 
 #endif
-
-// This flag is available in Windows SDK 8.0 and later.
-#ifndef TF_TMF_IMMERSIVEMODE
-#define TF_TMF_IMMERSIVEMODE  0x40000000
-#endif  // !TF_TMF_IMMERSIVEMODE
 
 HRESULT SpawnTool(const string &command) {
   if (!Process::SpawnMozcProcess(kMozcTool, "--mode=" + command)) {
@@ -654,7 +651,8 @@ class TipTextServiceImpl
     StorePointerForCurrentThread(this);
 
     HRESULT result = E_UNEXPECTED;
-    Logging::InitLogStream(kLogFileName);
+    Logging::InitLogStream(
+        FileUtil::JoinPath(SystemUtil::GetLoggingDirectory(), kLogFileName));
 
     EnsureKanaLockUnlocked();
 

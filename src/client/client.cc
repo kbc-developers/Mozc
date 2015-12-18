@@ -39,6 +39,7 @@
 #endif  // OS_WIN
 
 #include <cstddef>
+#include <memory>
 
 #include "base/const.h"
 #include "base/file_stream.h"
@@ -196,13 +197,13 @@ void Client::DumpHistorySnapshot(const string &filename,
   // open with append mode
   OutputFileStream output(snapshot_file.c_str(), ios::app);
 
-  output << "---- Start history snapshot for " << label << endl;
+  output << "---- Start history snapshot for " << label << std::endl;
   output << "Created at " << Logging::GetLogMessageHeader() << endl;
-  output << "Version " << Version::GetMozcVersion() << endl;
+  output << "Version " << Version::GetMozcVersion() << std::endl;
   for (size_t i = 0; i < history_inputs_.size(); ++i) {
     output << history_inputs_[i].DebugString();
   }
-  output << "---- End history snapshot for " << label << endl;
+  output << "---- End history snapshot for " << label << std::endl;
 }
 
 void Client::PlaybackHistory() {
@@ -553,7 +554,7 @@ bool Client::PingServer() const {
   input.set_type(commands::Input::NO_OPERATION);
 
   // Call IPC
-  scoped_ptr<IPCClientInterface> client(
+  std::unique_ptr<IPCClientInterface> client(
       client_factory_->NewClient(kServerAddress,
                                  server_launcher_->server_program()));
 
@@ -606,7 +607,8 @@ bool Client::CallAndCheckVersion(const commands::Input &input,
 
 bool Client::Call(const commands::Input &input,
                   commands::Output *output) {
-  VLOG(2) << "commands::Input: " << endl << input.DebugString();
+  VLOG(2) << "commands::Input: " << std::endl
+          << input.DebugString();
 
   // don't repeat Call() if the status is either
   // SERVER_FATAL, SERVER_TIMEOUT, or SERVER_BROKEN_MESSAGE
@@ -624,7 +626,7 @@ bool Client::Call(const commands::Input &input,
   input.SerializeToString(&request);
 
   // Call IPC
-  scoped_ptr<IPCClientInterface> client(
+  std::unique_ptr<IPCClientInterface> client(
       client_factory_->NewClient(kServerAddress,
                                  server_launcher_->server_program()));
 
@@ -694,7 +696,8 @@ bool Client::Call(const commands::Input &input,
          server_status_ == SERVER_UNKNOWN /* during StartServer() */)
              << " " << server_status_;
 
-  VLOG(2) << "commands::Output: " << endl << output->DebugString();
+  VLOG(2) << "commands::Output: " << std::endl
+          << output->DebugString();
 
   return true;
 }
@@ -860,7 +863,7 @@ bool Client::LaunchTool(const string &mode, const string &extra_arg) {
 #ifdef OS_WIN
     const string &path = mozc::SystemUtil::GetToolPath();
     wstring wpath;
-    Util::UTF8ToWide(path.c_str(), &wpath);
+    Util::UTF8ToWide(path, &wpath);
     wpath = L"\"" + wpath + L"\"";
     // Run administration dialog with UAC.
     // AFAIK, ShellExecute is only the way to launch process with

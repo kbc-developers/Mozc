@@ -30,17 +30,19 @@
 #include "rewriter/collocation_rewriter.h"
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "base/flags.h"
+#include "base/hash.h"
 #include "base/logging.h"
-#include "base/singleton.h"
 #include "base/string_piece.h"
 #include "base/util.h"
-#include "converter/conversion_request.h"
 #include "converter/segments.h"
 #include "data_manager/data_manager_interface.h"
 #include "dictionary/pos_matcher.h"
+#include "request/conversion_request.h"
 #include "rewriter/collocation_util.h"
 #include "storage/existence_filter.h"
 
@@ -81,11 +83,11 @@ bool ParseCompound(const StringPiece value, const StringPiece pattern,
 
   // Find the |first_content| candidate and check if it consists of Kanji only.
   StringPiece::const_iterator pattern_begin =
-      find(value.begin(), value.end(), pattern[0]);
+      std::find(value.begin(), value.end(), pattern[0]);
   if (pattern_begin == value.end()) {
     return false;
   }
-  first_content->set(value.data(), distance(value.begin(), pattern_begin));
+  first_content->set(value.data(), std::distance(value.begin(), pattern_begin));
   if (!Util::IsScriptType(*first_content, Util::KANJI)) {
     return false;
   }
@@ -545,12 +547,12 @@ class CollocationRewriter::CollocationFilter {
     string key;
     key.reserve(left.size() + right.size());
     key.assign(left).append(right);
-    const uint64 id = Util::Fingerprint(key);
+    const uint64 id = Hash::Fingerprint(key);
     return filter_->Exists(id);
   }
 
  private:
-  scoped_ptr<ExistenceFilter> filter_;
+  std::unique_ptr<ExistenceFilter> filter_;
 
   DISALLOW_COPY_AND_ASSIGN(CollocationFilter);
 };
@@ -569,12 +571,12 @@ class CollocationRewriter::SuppressionFilter {
     string key;
     key.reserve(cand.content_value.size() + 1 + cand.content_key.size());
     key.assign(cand.content_value).append("\t").append(cand.content_key);
-    const uint64 id = Util::Fingerprint(key);
+    const uint64 id = Hash::Fingerprint(key);
     return filter_->Exists(id);
   }
 
  private:
-  scoped_ptr<ExistenceFilter> filter_;
+  std::unique_ptr<ExistenceFilter> filter_;
 
   DISALLOW_COPY_AND_ASSIGN(SuppressionFilter);
 };

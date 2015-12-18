@@ -30,12 +30,14 @@
 #include "dictionary/dictionary_impl.h"
 
 #include <cstring>
+#include <memory>
 #include <string>
 
 #include "base/port.h"
 #include "base/system_util.h"
 #include "base/util.h"
 #include "config/config_handler.h"
+#include "request/conversion_request.h"
 #include "converter/node_allocator.h"
 #include "data_manager/testing/mock_data_manager.h"
 #include "dictionary/dictionary_interface.h"
@@ -46,19 +48,18 @@
 #include "dictionary/system/value_dictionary.h"
 #include "dictionary/user_dictionary_stub.h"
 #include "protocol/config.pb.h"
+#include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
-
-DECLARE_string(test_tmpdir);
 
 namespace mozc {
 namespace dictionary {
 namespace {
 
 struct DictionaryData {
-  scoped_ptr<DictionaryInterface> user_dictionary;
-  scoped_ptr<SuppressionDictionary> suppression_dictionary;
+  std::unique_ptr<DictionaryInterface> user_dictionary;
+  std::unique_ptr<SuppressionDictionary> suppression_dictionary;
   const POSMatcher *pos_matcher;
-  scoped_ptr<DictionaryInterface> dictionary;
+  std::unique_ptr<DictionaryInterface> dictionary;
 };
 
 DictionaryData *CreateDictionaryData() {
@@ -194,13 +195,17 @@ class DictionaryImplTest : public ::testing::Test {
   // Pair of DictionaryInterface's lookup method and query text.
   struct LookupMethodAndQuery {
     void (DictionaryInterface::*lookup_method)(
-        StringPiece, bool, DictionaryInterface::Callback *) const;
+        StringPiece,
+        const ConversionRequest &,
+        DictionaryInterface::Callback *) const;
     const char *query;
   };
+
+  ConversionRequest convreq_;
 };
 
 TEST_F(DictionaryImplTest, WordSuppressionTest) {
-  scoped_ptr<DictionaryData> data(CreateDictionaryData());
+  std::unique_ptr<DictionaryData> data(CreateDictionaryData());
   DictionaryInterface *d = data->dictionary.get();
   SuppressionDictionary *s = data->suppression_dictionary.get();
 
@@ -226,7 +231,7 @@ TEST_F(DictionaryImplTest, WordSuppressionTest) {
   s->UnLock();
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckKeyValueExistenceCallback callback(kKey, kValue);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_FALSE(callback.found());
   }
 
@@ -236,13 +241,13 @@ TEST_F(DictionaryImplTest, WordSuppressionTest) {
   s->UnLock();
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckKeyValueExistenceCallback callback(kKey, kValue);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_TRUE(callback.found());
   }
 }
 
 TEST_F(DictionaryImplTest, DisableSpellingCorrectionTest) {
-  scoped_ptr<DictionaryData> data(CreateDictionaryData());
+  std::unique_ptr<DictionaryData> data(CreateDictionaryData());
   DictionaryInterface *d = data->dictionary.get();
 
   // "あぼがど" -> "アボカド", which is in the test dictionary.
@@ -263,7 +268,7 @@ TEST_F(DictionaryImplTest, DisableSpellingCorrectionTest) {
   config::ConfigHandler::SetConfig(config);
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckSpellingExistenceCallback callback(kKey, kValue);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_TRUE(callback.found());
   }
 
@@ -272,13 +277,13 @@ TEST_F(DictionaryImplTest, DisableSpellingCorrectionTest) {
   config::ConfigHandler::SetConfig(config);;
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckSpellingExistenceCallback callback(kKey, kValue);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_FALSE(callback.found());
   }
 }
 
 TEST_F(DictionaryImplTest, DisableZipCodeConversionTest) {
-  scoped_ptr<DictionaryData> data(CreateDictionaryData());
+  std::unique_ptr<DictionaryData> data(CreateDictionaryData());
   DictionaryInterface *d = data->dictionary.get();
 
   // "100-0000" -> "東京都千代田区", which is in the test dictionary.
@@ -298,7 +303,7 @@ TEST_F(DictionaryImplTest, DisableZipCodeConversionTest) {
   config::ConfigHandler::SetConfig(config);
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckZipCodeExistenceCallback callback(kKey, kValue, data->pos_matcher);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_TRUE(callback.found());
   }
 
@@ -307,13 +312,13 @@ TEST_F(DictionaryImplTest, DisableZipCodeConversionTest) {
   config::ConfigHandler::SetConfig(config);;
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckZipCodeExistenceCallback callback(kKey, kValue, data->pos_matcher);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_FALSE(callback.found());
   }
 }
 
 TEST_F(DictionaryImplTest, DisableT13nConversionTest) {
-  scoped_ptr<DictionaryData> data(CreateDictionaryData());
+  std::unique_ptr<DictionaryData> data(CreateDictionaryData());
   DictionaryInterface *d = data->dictionary.get();
   NodeAllocator allocator;
 
@@ -335,7 +340,7 @@ TEST_F(DictionaryImplTest, DisableT13nConversionTest) {
   config::ConfigHandler::SetConfig(config);
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckEnglishT13nCallback callback(kKey, kValue);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_TRUE(callback.found());
   }
 
@@ -344,23 +349,23 @@ TEST_F(DictionaryImplTest, DisableT13nConversionTest) {
   config::ConfigHandler::SetConfig(config);;
   for (size_t i = 0; i < arraysize(kTestPair); ++i) {
     CheckEnglishT13nCallback callback(kKey, kValue);
-    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, false, &callback);
+    (d->*kTestPair[i].lookup_method)(kTestPair[i].query, convreq_, &callback);
     EXPECT_FALSE(callback.found());
   }
 }
 
 TEST_F(DictionaryImplTest, LookupComment) {
-  scoped_ptr<DictionaryData> data(CreateDictionaryData());
+  std::unique_ptr<DictionaryData> data(CreateDictionaryData());
   DictionaryInterface *d = data->dictionary.get();
   NodeAllocator allocator;
 
   string comment;
-  EXPECT_FALSE(d->LookupComment("key", "value", &comment));
+  EXPECT_FALSE(d->LookupComment("key", "value", convreq_, &comment));
   EXPECT_TRUE(comment.empty());
 
   // If key or value is "comment", UserDictionaryStub returns
   // "UserDictionaryStub" as comment.
-  EXPECT_TRUE(d->LookupComment("key", "comment", &comment));
+  EXPECT_TRUE(d->LookupComment("key", "comment", convreq_, &comment));
   EXPECT_EQ("UserDictionaryStub", comment);
 }
 

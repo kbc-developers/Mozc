@@ -31,14 +31,13 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "base/config_file_stream.h"
-#include "base/init.h"
 #include "base/logging.h"
 #include "base/port.h"
-#include "base/scoped_ptr.h"
 #include "base/singleton.h"
 #include "base/util.h"
 #include "config/config_handler.h"
@@ -55,10 +54,6 @@ namespace {
 const uint32 kLRUSize    = 128;  // enough?
 const uint32 kSeedValue  = 0x7fe1fed1;  // random seed value for storage
 const char   kFileName[] = "user://cform.db";
-
-REGISTER_MODULE_RELOADER(
-    character_form,
-    { CharacterFormManager::GetCharacterFormManager()->Reload(); } )
 
 class CharacterFormManagerImpl {
  public:
@@ -535,8 +530,8 @@ void CharacterFormManagerImpl::AddRule(
   // use vector because set is slower.
   // group table is used in SaveCharacterFormToStorage and this will be called
   // everytime user submits conversion.
-  sort(group.begin(), group.end());
-  vector<uint16>::iterator last = unique(group.begin(), group.end());
+  std::sort(group.begin(), group.end());
+  vector<uint16>::iterator last = std::unique(group.begin(), group.end());
   group.erase(last, group.end());
 
   for (size_t i = 0; i < group.size(); ++i) {
@@ -566,9 +561,9 @@ class CharacterFormManager::Data {
   }
 
  private:
-  scoped_ptr<PreeditCharacterFormManagerImpl> preedit_;
-  scoped_ptr<ConversionCharacterFormManagerImpl> conversion_;
-  scoped_ptr<LRUStorage> storage_;
+  std::unique_ptr<PreeditCharacterFormManagerImpl> preedit_;
+  std::unique_ptr<ConversionCharacterFormManagerImpl> conversion_;
+  std::unique_ptr<LRUStorage> storage_;
 };
 
 CharacterFormManager::Data::Data() {
@@ -591,16 +586,14 @@ CharacterFormManager *CharacterFormManager::GetCharacterFormManager() {
 }
 
 CharacterFormManager::CharacterFormManager() : data_(new Data) {
-  Reload();
+  ReloadConfig(ConfigHandler::GetConfig());
 }
 
 CharacterFormManager::~CharacterFormManager() {
 }
 
-void CharacterFormManager::Reload() {
+void CharacterFormManager::ReloadConfig(const Config &config) {
   Clear();
-  const Config &config = ConfigHandler::GetConfig();
-
   if (config.character_form_rules_size() > 0) {
     for (size_t i = 0; i < config.character_form_rules_size(); ++i) {
       const string &group = config.character_form_rules(i).group();

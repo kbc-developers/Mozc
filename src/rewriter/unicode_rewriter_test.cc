@@ -31,6 +31,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <memory>
 #include <string>
 
 #include "base/port.h"
@@ -38,15 +39,14 @@
 #include "base/util.h"
 #include "composer/composer.h"
 #include "config/config_handler.h"
-#include "converter/conversion_request.h"
 #include "converter/segments.h"
 #include "engine/engine_interface.h"
 #include "engine/mock_data_engine_factory.h"
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
+#include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
-
-DECLARE_string(test_tmpdir);
 
 namespace mozc {
 namespace {
@@ -91,7 +91,7 @@ class UnicodeRewriterTest : public testing::Test {
     engine_.reset(MockDataEngineFactory::Create());
   }
 
-  scoped_ptr<EngineInterface> engine_;
+  std::unique_ptr<EngineInterface> engine_;
   const commands::Request &default_request() const {
     return default_request_;
   }

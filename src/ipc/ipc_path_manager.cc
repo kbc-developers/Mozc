@@ -150,7 +150,7 @@ class IPCPathManagerMap {
       return it->second;
     }
     IPCPathManager *manager = new IPCPathManager(name);
-    manager_map_.insert(make_pair(name, manager));
+    manager_map_.insert(std::make_pair(name, manager));
     return manager;
   }
 
@@ -461,7 +461,7 @@ bool IPCPathManager::LoadPathNameInternal() {
   // we want to pass FILE_SHRED_DELETE flag for CreateFile.
 #ifdef OS_WIN
   wstring wfilename;
-  Util::UTF8ToWide(filename.c_str(), &wfilename);
+  Util::UTF8ToWide(filename, &wfilename);
 
   {
     ScopedHandle handle

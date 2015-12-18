@@ -30,12 +30,12 @@
 #ifndef MOZC_DICTIONARY_SYSTEM_SYSTEM_DICTIONARY_H_
 #define MOZC_DICTIONARY_SYSTEM_SYSTEM_DICTIONARY_H_
 
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
 #include "base/port.h"
-#include "base/scoped_ptr.h"
 #include "base/string_piece.h"
 #include "dictionary/dictionary_interface.h"
 #include "dictionary/system/codec_interface.h"
@@ -90,7 +90,7 @@ class SystemDictionary : public DictionaryInterface {
 
    private:
     struct Specification;
-    scoped_ptr<Specification> spec_;
+    std::unique_ptr<Specification> spec_;
     DISALLOW_COPY_AND_ASSIGN(Builder);
   };
 
@@ -99,14 +99,23 @@ class SystemDictionary : public DictionaryInterface {
   // Implementation of DictionaryInterface.
   virtual bool HasKey(StringPiece key) const;
   virtual bool HasValue(StringPiece value) const;
-  virtual void LookupPredictive(
-      StringPiece key, bool use_kana_modifier_insensitive_lookup,
-      Callback *callback) const;
-  virtual void LookupPrefix(
-      StringPiece key, bool use_kana_modifier_insensitive_lookup,
-      Callback *callback) const;
-  virtual void LookupExact(StringPiece key, Callback *callback) const;
-  virtual void LookupReverse(StringPiece str, Callback *callback) const;
+
+  virtual void LookupPredictive(StringPiece key,
+                                const ConversionRequest &converter_request,
+                                Callback *callback) const;
+
+  virtual void LookupPrefix(StringPiece key,
+                            const ConversionRequest &converter_request,
+                            Callback *callback) const;
+
+  virtual void LookupExact(StringPiece key,
+                           const ConversionRequest &converter_request,
+                           Callback *callback) const;
+
+  virtual void LookupReverse(StringPiece str,
+                             const ConversionRequest &converter_request,
+                             Callback *callback) const;
+
   virtual void PopulateReverseLookupCache(StringPiece str) const;
   virtual void ClearReverseLookupCache() const;
 
@@ -151,9 +160,9 @@ class SystemDictionary : public DictionaryInterface {
   const uint32 *frequent_pos_;
   const SystemDictionaryCodecInterface *codec_;
   KeyExpansionTable hiragana_expansion_table_;
-  scoped_ptr<DictionaryFile> dictionary_file_;
-  mutable scoped_ptr<ReverseLookupCache> reverse_lookup_cache_;
-  scoped_ptr<ReverseLookupIndex> reverse_lookup_index_;
+  std::unique_ptr<DictionaryFile> dictionary_file_;
+  mutable std::unique_ptr<ReverseLookupCache> reverse_lookup_cache_;
+  std::unique_ptr<ReverseLookupIndex> reverse_lookup_index_;
 
   DISALLOW_COPY_AND_ASSIGN(SystemDictionary);
 };

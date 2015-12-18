@@ -29,12 +29,14 @@
 
 #include "net/jsonpath.h"
 
+#include <algorithm>
 #include <cctype>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "base/logging.h"
+#include "base/number_util.h"
 #include "base/port.h"
 #include "base/util.h"
 
@@ -97,7 +99,7 @@ bool GetDigit(const string &str, int *output) {
     ++begin;
   }
 
-  *output = atoi32(str.c_str());
+  *output = NumberUtil::SimpleAtoi(str);
 
   return true;
 }

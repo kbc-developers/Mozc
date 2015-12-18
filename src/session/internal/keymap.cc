@@ -31,6 +31,7 @@
 
 #include "session/internal/keymap.h"
 
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>
@@ -40,7 +41,6 @@
 #include "base/file_stream.h"
 #include "base/logging.h"
 #include "base/port.h"
-#include "base/scoped_ptr.h"
 #include "base/util.h"
 #include "composer/key_event_util.h"
 #include "composer/key_parser.h"
@@ -107,8 +107,8 @@ bool KeyMapManager::ReloadWithKeymap(
     const string filename = ConfigFileStream::GetFileName(keymap_file);
     OutputFileStream ofs(filename.c_str());
     if (ofs) {
-      ofs << "# This is a copy of keymap table for debugging." << endl;
-      ofs << "# Nothing happens when you edit this file manually." << endl;
+      ofs << "# This is a copy of keymap table for debugging." << std::endl;
+      ofs << "# Nothing happens when you edit this file manually." << std::endl;
       ofs << custom_keymap_table;
     }
 #endif
@@ -160,7 +160,7 @@ const char *KeyMapManager::GetKeyMapFileName(
 }
 
 bool KeyMapManager::LoadFile(const char *filename) {
-  scoped_ptr<istream> ifs(ConfigFileStream::LegacyOpen(filename));
+  std::unique_ptr<istream> ifs(ConfigFileStream::LegacyOpen(filename));
   if (ifs.get() == NULL) {
     LOG(WARNING) << "cannot load keymap table: " << filename;
     return false;

@@ -30,6 +30,7 @@
 #include "rewriter/emoji_rewriter.h"
 
 #include <cstddef>
+#include <memory>
 #include <string>
 
 #include "base/logging.h"
@@ -37,12 +38,12 @@
 #include "base/system_util.h"
 #include "base/util.h"
 #include "config/config_handler.h"
-#include "converter/conversion_request.h"
 #include "converter/segments.h"
 #include "data_manager/user_pos_manager.h"
 #include "dictionary/pos_matcher.h"
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
 #include "rewriter/variants_rewriter.h"
 #include "testing/base/public/gunit.h"
 #include "usage_stats/usage_stats.h"
@@ -196,7 +197,7 @@ class EmojiRewriterTest : public ::testing::Test {
   }
 
   const ConversionRequest request_;
-  scoped_ptr<EmojiRewriter> rewriter_;
+  std::unique_ptr<EmojiRewriter> rewriter_;
 
  private:
   string original_profile_directory_;

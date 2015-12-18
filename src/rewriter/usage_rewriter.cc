@@ -34,12 +34,12 @@
 #include "base/logging.h"
 #include "base/util.h"
 #include "config/config_handler.h"
-#include "converter/conversion_request.h"
 #include "converter/segments.h"
 #include "data_manager/data_manager_interface.h"
 #include "dictionary/dictionary_interface.h"
 #include "dictionary/pos_matcher.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
 
 using mozc::dictionary::DictionaryInterface;
 using mozc::dictionary::POSMatcher;
@@ -164,7 +164,7 @@ bool UsageRewriter::Rewrite(const ConversionRequest &request,
                             Segments *segments) const {
   VLOG(2) << segments->DebugString();
 
-  const config::Config &config = config::ConfigHandler::GetConfig();
+  const config::Config &config = request.config();
   // Default value of use_local_usage_dictionary() is true.
   // So if information_list_config() is not available in the config,
   // we don't need to return false here.
@@ -193,6 +193,7 @@ bool UsageRewriter::Rewrite(const ConversionRequest &request,
       if (dictionary_ != NULL) {
         if (dictionary_->LookupComment(segment->candidate(j).content_key,
                                        segment->candidate(j).content_value,
+                                       request,
                                        &comment)) {
           Segment::Candidate *candidate = segment->mutable_candidate(j);
           candidate->usage_id = usage_id_for_user_comment;

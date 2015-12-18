@@ -76,10 +76,6 @@ class WinUtil {
   // implicit link.
   static bool IsDLLSynchronizationHeld(bool *lock_held);
 
-  // Log off the current user.
-  // Return true if the operation successfully finished.
-  static bool Logoff();
-
   // Returns true if |lhs| and |rhs| are treated as the same string by the OS.
   // This function internally uses CompareStringOrdinal, or
   // RtlCompareUnicodeString as a fallback, or _wcsicmp_l with LANG "English"
@@ -124,11 +120,6 @@ class WinUtil {
   // Otherwise, returns false.
   static bool IsProcessInAppContainer(HANDLE process_handle,
                                       bool *in_appcontainer);
-
-  // Returns true if CUAS (Cicero Unaware Application Support) is enabled.
-  // Note: This method was previously defined in win32/base/imm_util.h but
-  // moved to here because UsateStats depends on this method.
-  static bool IsCuasEnabled();
 
   // Returns true if |info| is filled with a valid file information that
   // describes |path|. |path| can be a directory or a file.

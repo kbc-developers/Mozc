@@ -30,6 +30,7 @@
 #include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
 
+#include "base/logging.h"
 #include "base/util.h"
 #include "protocol/commands.pb.h"
 #include "win32/ime/ime_composition_string.h"
@@ -526,7 +527,7 @@ void FillOutputForConversion(
     candidate_list->set_category(commands::CONVERSION);
   }
 }
-}  // anonymous namespace
+}  // namespace
 
 TEST(ImeCompositionStringTest, StartCompositionTest) {
   CompositionString compstr;

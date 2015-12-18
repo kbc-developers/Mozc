@@ -48,7 +48,6 @@
 #include "base/protobuf/protobuf.h"
 #include "base/protobuf/repeated_field.h"
 #include "base/protobuf/zero_copy_stream_impl.h"
-#include "base/scoped_ptr.h"
 #include "base/util.h"
 #include "dictionary/user_dictionary_util.h"
 
@@ -287,10 +286,9 @@ bool UserDictionaryStorage::ExportDictionary(
   const UserDictionary &dic = dictionaries(index);
   for (size_t i = 0; i < dic.entries_size(); ++i) {
     const UserDictionaryEntry &entry = dic.entries(i);
-    ofs << entry.key() << "\t"
-        << entry.value() << "\t"
+    ofs << entry.key() << "\t" << entry.value() << "\t"
         << UserDictionaryUtil::GetStringPosType(entry.pos()) << "\t"
-        << entry.comment() << endl;
+        << entry.comment() << std::endl;
   }
 
   return true;

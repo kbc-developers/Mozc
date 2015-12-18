@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -45,9 +46,10 @@
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
 #include "session/request_test_util.h"
+#include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
 
-DECLARE_string(test_tmpdir);
+using std::unique_ptr;
 
 using mozc::quality_regression::QualityRegressionUtil;
 
@@ -107,9 +109,9 @@ class QualityRegressionTest : public testing::Test {
       line.append("\tActual: ").append(actual_value);
       if (test_result) {
         // use "-1.0" as a dummy expected ratio
-        (*table)[label].push_back(make_pair(-1.0, line));
+        (*table)[label].push_back(std::make_pair(-1.0, line));
       } else {
-        (*table)[label].push_back(make_pair(item.accuracy, line));
+        (*table)[label].push_back(std::make_pair(item.accuracy, line));
       }
     }
 
@@ -129,7 +131,7 @@ class QualityRegressionTest : public testing::Test {
       map<string, vector<pair<float, string>>> *results) {
     for (auto it = results->begin(); it != results->end(); ++it) {
       vector<pair<float, string>> *values = &it->second;
-      sort(values->begin(), values->end());
+      std::sort(values->begin(), values->end());
       size_t correct = 0;
       bool all_passed = true;
       for (const auto &value : *values) {
@@ -169,14 +171,14 @@ class QualityRegressionTest : public testing::Test {
 
 
 TEST_F(QualityRegressionTest, ChromeOSTest) {
-  scoped_ptr<EngineInterface> chromeos_engine(ChromeOsEngineFactory::Create());
+  unique_ptr<EngineInterface> chromeos_engine(ChromeOsEngineFactory::Create());
   QualityRegressionUtil util(chromeos_engine->GetConverter());
   RunTestForPlatform(QualityRegressionUtil::CHROMEOS, &util);
 }
 
 // Test for desktop
 TEST_F(QualityRegressionTest, BasicTest) {
-  scoped_ptr<EngineInterface> engine(EngineFactory::Create());
+  unique_ptr<EngineInterface> engine(EngineFactory::Create());
   QualityRegressionUtil util(engine->GetConverter());
   RunTestForPlatform(QualityRegressionUtil::DESKTOP, &util);
 }

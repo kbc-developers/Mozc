@@ -30,19 +30,20 @@
 #include "rewriter/date_rewriter.h"
 
 #include <cstddef>
+#include <memory>
 
+#include "base/clock.h"
 #include "base/clock_mock.h"
 #include "base/port.h"
-#include "base/scoped_ptr.h"
 #include "base/system_util.h"
 #include "base/util.h"
 #include "composer/composer.h"
 #include "composer/table.h"
 #include "config/config_handler.h"
-#include "converter/conversion_request.h"
 #include "converter/segments.h"
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
 #include "testing/base/public/gunit.h"
 
 DECLARE_string(test_tmpdir);
@@ -220,9 +221,9 @@ class DateRewriterTest : public testing::Test {
 };
 
 TEST_F(DateRewriterTest, DateRewriteTest) {
-  scoped_ptr<ClockMock> mock_clock(
+  std::unique_ptr<ClockMock> mock_clock(
       new ClockMock(kTestSeconds, kTestMicroSeconds));
-  Util::SetClockHandler(mock_clock.get());
+  Clock::SetClockForUnitTest(mock_clock.get());
 
   DateRewriter rewriter;
   Segments segments;
@@ -471,7 +472,7 @@ TEST_F(DateRewriterTest, DateRewriteTest) {
     }
   }
 
-  Util::SetClockHandler(NULL);
+  Clock::SetClockForUnitTest(nullptr);
 }
 
 TEST_F(DateRewriterTest, ADToERA) {
@@ -1125,6 +1126,53 @@ TEST_F(DateRewriterTest, NumberRewriterTest) {
       segments,
       "\xE5\x8D\x88\xE5\xBE\x8C\x36\xE6\x99\x82\xE5\x8D\x8A"));
   EXPECT_TRUE(ContainCandidate(segments, "18:30"));
+
+  // "日付"
+  EXPECT_EQ(0, CountDescription(segments, "\xE6\x97\xA5\xE4\xBB\x98"));
+
+  // 123 is expected 3 time candidates and 2 date candidates
+  InitSegment("123", "123", &segments);
+  EXPECT_TRUE(rewriter.Rewrite(conversion_request, &segments));
+  // "時刻"
+  EXPECT_EQ(3, CountDescription(segments, "\xE6\x99\x82\xE5\x88\xBB"));
+  EXPECT_TRUE(ContainCandidate(segments, "1:23"));
+  // "1時23分"
+  EXPECT_TRUE(ContainCandidate(segments,
+                               "\x31\xe6\x99\x82\x32\x33\xe5\x88\x86"));
+  // "午前1時23分"
+  EXPECT_TRUE(ContainCandidate(
+      segments,
+      "\xe5\x8d\x88\xe5\x89\x8d\x31\xe6\x99\x82\x32\x33\xe5\x88\x86"));
+
+  // "日付"
+  EXPECT_EQ(2, CountDescription(segments, "\xE6\x97\xA5\xE4\xBB\x98"));
+  EXPECT_TRUE(ContainCandidate(segments, "01/23"));
+  // "1月23日"
+  EXPECT_TRUE(ContainCandidate(segments,
+                               "\x31\xe6\x9c\x88\x32\x33\xe6\x97\xa5"));
+
+  // 346 is expected 3 time candidates and 0 date candidate
+  InitSegment("346", "346", &segments);
+  EXPECT_TRUE(rewriter.Rewrite(conversion_request, &segments));
+  // "時刻"
+  EXPECT_EQ(3, CountDescription(segments, "\xE6\x99\x82\xE5\x88\xBB"));
+  EXPECT_TRUE(ContainCandidate(segments, "3:46"));
+  // "3時46分"
+  EXPECT_TRUE(ContainCandidate(segments,
+                               "\x33\xe6\x99\x82\x34\x36\xe5\x88\x86"));
+  // "午前3時46分"
+  EXPECT_TRUE(ContainCandidate(
+        segments,
+        "\xe5\x8d\x88\xe5\x89\x8d\x33\xe6\x99\x82\x34\x36\xe5\x88\x86"));
+
+  // "日付"
+  EXPECT_EQ(0, CountDescription(segments, "\xE6\x97\xA5\xE4\xBB\x98"));
+
+  // 765 is expected 0 time candidate and 0 date candidate
+  InitSegment("765", "765", &segments);
+  EXPECT_FALSE(rewriter.Rewrite(conversion_request, &segments));
+  // "時刻"
+  EXPECT_EQ(0, CountDescription(segments, "\xE6\x99\x82\xE5\x88\xBB"));
 
   // "日付"
   EXPECT_EQ(0, CountDescription(segments, "\xE6\x97\xA5\xE4\xBB\x98"));

@@ -29,6 +29,7 @@
 
 #include "composer/composer.h"
 
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -148,9 +149,9 @@ class ComposerTest : public testing::Test {
     ConfigHandler::SetConfig(config);
   }
 
-  scoped_ptr<Composer> composer_;
-  scoped_ptr<Table> table_;
-  scoped_ptr<Request> default_request_;
+  std::unique_ptr<Composer> composer_;
+  std::unique_ptr<Table> table_;
+  std::unique_ptr<Request> default_request_;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(ComposerTest);
@@ -1125,27 +1126,17 @@ TEST_F(ComposerTest, ApplyTemporaryInputMode) {
 
     // pair<input, use_temporary_input_mode>
     pair<string, bool> kTestDataAscii[] = {
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair(".", true),
-      make_pair("a", true),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair(".", true),
-      make_pair("a", true),
-      // "あ"
-      make_pair("\xE3\x81\x82", false),
-      make_pair("a", false),
+        std::make_pair("a", false), std::make_pair("A", true),
+        std::make_pair("a", true), std::make_pair("a", true),
+        std::make_pair("A", true), std::make_pair("A", true),
+        std::make_pair("a", false), std::make_pair("A", true),
+        std::make_pair("A", true), std::make_pair("A", true),
+        std::make_pair("a", false), std::make_pair("A", true),
+        std::make_pair(".", true), std::make_pair("a", true),
+        std::make_pair("A", true), std::make_pair("A", true),
+        std::make_pair(".", true), std::make_pair("a", true),
+        // "あ"
+        std::make_pair("\xE3\x81\x82", false), std::make_pair("a", false),
     };
 
     for (int i = 0; i < arraysize(kTestDataAscii); ++i) {
@@ -1171,27 +1162,17 @@ TEST_F(ComposerTest, ApplyTemporaryInputMode) {
 
     // pair<input, use_temporary_input_mode>
     pair<string, bool> kTestDataAscii[] = {
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair(".", true),
-      make_pair("A", true),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair(".", true),
-      make_pair("A", true),
-      // "あ"
-      make_pair("\xE3\x81\x82", false),
-      make_pair("A", false),
+        std::make_pair("A", false), std::make_pair("a", true),
+        std::make_pair("A", true), std::make_pair("A", true),
+        std::make_pair("a", true), std::make_pair("a", true),
+        std::make_pair("A", false), std::make_pair("a", true),
+        std::make_pair("a", true), std::make_pair("a", true),
+        std::make_pair("A", false), std::make_pair("a", true),
+        std::make_pair(".", true), std::make_pair("A", true),
+        std::make_pair("a", true), std::make_pair("a", true),
+        std::make_pair(".", true), std::make_pair("A", true),
+        // "あ"
+        std::make_pair("\xE3\x81\x82", false), std::make_pair("A", false),
     };
 
     for (int i = 0; i < arraysize(kTestDataAscii); ++i) {
@@ -1217,27 +1198,17 @@ TEST_F(ComposerTest, ApplyTemporaryInputMode) {
 
     // pair<input, use_temporary_input_mode>
     pair<string, bool> kTestDataKatakana[] = {
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair("a", false),
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair(".", true),
-      make_pair("a", false),
-      make_pair("A", true),
-      make_pair("A", true),
-      make_pair(".", true),
-      make_pair("a", false),
-      // "あ"
-      make_pair("\xE3\x81\x82", false),
-      make_pair("a", false),
+        std::make_pair("a", false), std::make_pair("A", true),
+        std::make_pair("a", false), std::make_pair("a", false),
+        std::make_pair("A", true), std::make_pair("A", true),
+        std::make_pair("a", false), std::make_pair("A", true),
+        std::make_pair("A", true), std::make_pair("A", true),
+        std::make_pair("a", false), std::make_pair("A", true),
+        std::make_pair(".", true), std::make_pair("a", false),
+        std::make_pair("A", true), std::make_pair("A", true),
+        std::make_pair(".", true), std::make_pair("a", false),
+        // "あ"
+        std::make_pair("\xE3\x81\x82", false), std::make_pair("a", false),
     };
 
     for (int i = 0; i < arraysize(kTestDataKatakana); ++i) {
@@ -1263,27 +1234,17 @@ TEST_F(ComposerTest, ApplyTemporaryInputMode) {
 
     // pair<input, use_temporary_input_mode>
     pair<string, bool> kTestDataKatakana[] = {
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair("A", false),
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair(".", true),
-      make_pair("A", false),
-      make_pair("a", true),
-      make_pair("a", true),
-      make_pair(".", true),
-      make_pair("A", false),
-      // "あ"
-      make_pair("\xE3\x81\x82", false),
-      make_pair("A", false),
+        std::make_pair("A", false), std::make_pair("a", true),
+        std::make_pair("A", false), std::make_pair("A", false),
+        std::make_pair("a", true), std::make_pair("a", true),
+        std::make_pair("A", false), std::make_pair("a", true),
+        std::make_pair("a", true), std::make_pair("a", true),
+        std::make_pair("A", false), std::make_pair("a", true),
+        std::make_pair(".", true), std::make_pair("A", false),
+        std::make_pair("a", true), std::make_pair("a", true),
+        std::make_pair(".", true), std::make_pair("A", false),
+        // "あ"
+        std::make_pair("\xE3\x81\x82", false), std::make_pair("A", false),
     };
 
     for (int i = 0; i < arraysize(kTestDataKatakana); ++i) {
@@ -3341,9 +3302,9 @@ class TypingCorrectionTest : public ::testing::Test {
     return queries.empty();
   }
 
-  scoped_ptr<Request> request_;
-  scoped_ptr<Composer> composer_;
-  scoped_ptr<Table> table_;
+  std::unique_ptr<Request> request_;
+  std::unique_ptr<Composer> composer_;
+  std::unique_ptr<Table> table_;
   Config config_backup_;
 };
 

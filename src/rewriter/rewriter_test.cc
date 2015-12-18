@@ -30,20 +30,20 @@
 #include "rewriter/rewriter.h"
 
 #include <cstddef>
+#include <memory>
 #include <string>
 
 #include "base/system_util.h"
 #include "config/config_handler.h"
-#include "converter/conversion_request.h"
 #include "converter/converter_mock.h"
 #include "converter/segments.h"
 #include "data_manager/testing/mock_data_manager.h"
 #include "dictionary/pos_group.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
 #include "rewriter/rewriter_interface.h"
+#include "testing/base/public/googletest.h"
 #include "testing/base/public/gunit.h"
-
-DECLARE_string(test_tmpdir);
 
 using mozc::dictionary::DictionaryInterface;
 using mozc::dictionary::PosGroup;
@@ -91,9 +91,9 @@ class RewriterTest : public ::testing::Test {
     return rewriter_.get();
   }
 
-  scoped_ptr<ConverterMock> converter_mock_;
-  scoped_ptr<const PosGroup> pos_group_;
-  scoped_ptr<RewriterImpl> rewriter_;
+  std::unique_ptr<ConverterMock> converter_mock_;
+  std::unique_ptr<const PosGroup> pos_group_;
+  std::unique_ptr<RewriterImpl> rewriter_;
 };
 
 // Command rewriter should be disabled on Android build. b/5851240

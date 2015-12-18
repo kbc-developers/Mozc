@@ -469,16 +469,6 @@ def ParseGypOptions(args=None, values=None):
                    macro_name='MOZC_ENABLE_MODE_INDICATOR',
                    option_name='mode_indicator')
 
-  # TODO(yukawa): Remove this option when Zinnia can be built on Windows with
-  #               enabling Unicode.
-  use_zinnia_default = True
-  if IsWindows():
-    # Zinnia on Windows cannot be enabled because of compile error.
-    use_zinnia_default = False
-  parser.add_option('--use_zinnia', dest='use_zinnia',
-                    default=use_zinnia_default,
-                    help='Use Zinnia if specified.')
-
   if IsWindows():
     parser.add_option('--wix_dir', dest='wix_dir',
                       default=GetDefaultWixPath(),
@@ -547,11 +537,6 @@ def ParseBuildOptions(args=None, values=None):
   """Parses command line options for the build command."""
   parser = optparse.OptionParser(usage='Usage: %prog build [options]')
   AddCommonOptions(parser)
-  if IsLinux():
-    default_build_concurrency = GetNumberOfProcessors() * 2
-    parser.add_option('--jobs', '-j', dest='jobs',
-                      default=('%d' % default_build_concurrency),
-                      metavar='N', help='run build jobs in parallel')
   parser.add_option('--configuration', '-c', dest='configuration',
                     default='Debug', help='specify the build configuration.')
 
@@ -576,12 +561,7 @@ def ParseRunTestsOptions(args=None, values=None):
   parser = optparse.OptionParser(
       usage='Usage: %prog runtests [options] [test_targets] [-- build options]')
   AddCommonOptions(parser)
-  if IsLinux():
-    default_build_concurrency = GetNumberOfProcessors() * 2
-    parser.add_option('--jobs', '-j', dest='jobs',
-                      default=('%d' % default_build_concurrency),
-                      metavar='N', help='run build jobs in parallel')
-  default_test_jobs = GetNumberOfProcessors() * 2
+  default_test_jobs = GetNumberOfProcessors()
   parser.add_option('--test_jobs', dest='test_jobs', type='int',
                     default=default_test_jobs,
                     metavar='N', help='run test jobs in parallel')
@@ -879,15 +859,9 @@ def GypMain(options, unused_args, _):
   else:
     gyp_options.extend(['-D', 'use_dynamically_linked_qt=0'])
 
-  if options.use_zinnia and target_platform not in ['Android', 'NaCl']:
-    gyp_options.extend(['-D', 'use_zinnia=YES'])
-  else:
-    gyp_options.extend(['-D', 'use_zinnia=NO'])
-
   if (options.target_platform == 'Linux' and
       '%s/unix/ibus/ibus.gyp' % SRC_DIR in gyp_file_names):
     gyp_options.extend(['-D', 'use_libibus=1'])
-
 
   # Dictionary configuration
   if target_platform == 'Android':
@@ -1021,8 +995,7 @@ def BuildOnLinux(options, targets, unused_original_directory_name):
   short_basename = GetBuildShortBaseName(options,
                                          GetMozcVersion().GetTargetPlatform())
   make_command = ninja
-  build_args = ['-j %s' % options.jobs,
-                '-C', '%s/%s' % (short_basename, options.configuration)]
+  build_args = ['-C', '%s/%s' % (short_basename, options.configuration)]
   RunOrDie([make_command] + build_args + target_names)
 
 

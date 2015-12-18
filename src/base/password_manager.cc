@@ -78,7 +78,7 @@ class ScopedReadWriteFile {
     }
 #ifdef OS_WIN
     wstring wfilename;
-    Util::UTF8ToWide(filename_.c_str(), &wfilename);
+    Util::UTF8ToWide(filename_, &wfilename);
     if (!::SetFileAttributesW(wfilename.c_str(), FILE_ATTRIBUTE_NORMAL)) {
       LOG(ERROR) << "Cannot make writable: " << filename_;
     }
@@ -326,7 +326,7 @@ class PasswordManagerImpl {
   PasswordManagerInterface *password_manager_;
   Mutex mutex_;
 };
-}  // anonymous namespace
+}  // namespace
 
 bool PasswordManager::InitPassword() {
   return Singleton<PasswordManagerImpl>::get()->InitPassword();

@@ -30,6 +30,7 @@
 #include "dictionary/system/value_dictionary.h"
 
 #include <limits>
+#include <memory>
 #include <queue>
 #include <string>
 
@@ -59,7 +60,7 @@ ValueDictionary::~ValueDictionary() {}
 // static
 ValueDictionary *ValueDictionary::CreateValueDictionaryFromFile(
     const POSMatcher& pos_matcher, const string &filename) {
-  scoped_ptr<ValueDictionary> instance(new ValueDictionary(pos_matcher));
+  std::unique_ptr<ValueDictionary> instance(new ValueDictionary(pos_matcher));
   DCHECK(instance.get());
   if (!instance->dictionary_file_->OpenFromFile(filename)) {
     LOG(ERROR) << "Failed to open system dictionary file";
@@ -81,7 +82,7 @@ ValueDictionary *ValueDictionary::CreateValueDictionaryFromImage(
   // Note that we don't munlock the space because it's always better to keep
   // the singleton system dictionary paged in as long as the process runs.
   Mmap::MaybeMLock(ptr, len);
-  scoped_ptr<ValueDictionary> instance(new ValueDictionary(pos_matcher));
+  std::unique_ptr<ValueDictionary> instance(new ValueDictionary(pos_matcher));
   DCHECK(instance.get());
   if (!instance->dictionary_file_->OpenFromImage(ptr, len)) {
     LOG(ERROR) << "Failed to open system dictionary file";
@@ -163,7 +164,7 @@ inline DictionaryInterface::Callback::ResultType HandleTerminalNode(
 
 void ValueDictionary::LookupPredictive(
     StringPiece key,
-    bool,  // use_kana_modifier_insensitive_lookup
+    const ConversionRequest &conversion_request,
     Callback *callback) const {
   // Do nothing for empty key, although looking up all the entries with empty
   // string seems natural.
@@ -213,10 +214,14 @@ void ValueDictionary::LookupPredictive(
 }
 
 void ValueDictionary::LookupPrefix(
-    StringPiece key, bool use_kana_modifier_insensitive_lookup,
+    StringPiece key,
+    const ConversionRequest &conversion_request,
     Callback *callback) const {}
 
-void ValueDictionary::LookupExact(StringPiece key, Callback *callback) const {
+void ValueDictionary::LookupExact(
+    StringPiece key,
+    const ConversionRequest &conversion_request,
+    Callback *callback) const {
   if (key.empty()) {
     // For empty string, return nothing for compatibility reason; see the
     // comment above.
@@ -236,8 +241,11 @@ void ValueDictionary::LookupExact(StringPiece key, Callback *callback) const {
   callback->OnToken(key, key, token);
 }
 
-void ValueDictionary::LookupReverse(StringPiece str,
-                                    Callback *callback) const {}
+void ValueDictionary::LookupReverse(
+    StringPiece str,
+    const ConversionRequest &conversion_request,
+    Callback *callback) const {
+}
 
 }  // namespace dictionary
 }  // namespace mozc

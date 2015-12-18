@@ -36,9 +36,12 @@
 #endif
 
 #include <QtGui/QMessageBox>
+
 #include <algorithm>
 #include <cstdlib>
+#include <memory>
 #include <sstream>
+
 #include "base/config_file_stream.h"
 #include "base/const.h"
 #include "base/logging.h"
@@ -520,7 +523,7 @@ void GetComboboxForPreeditMethod(const QComboBox *combobox,
     config->set_use_keyboard_to_change_preedit_method(false);
   }
 }
-}  // anonymous namespace
+}  // namespace
 
 
 // TODO(taku)
@@ -815,7 +818,7 @@ void ConfigDialog::EditKeymap() {
     // Load from predefined mapping file.
     const char *keymap_file =
         keymap::KeyMapManager::GetKeyMapFileName(itr->second);
-    scoped_ptr<istream> ifs(
+    std::unique_ptr<istream> ifs(
         ConfigFileStream::LegacyOpen(keymap_file));
     CHECK(ifs.get() != NULL);  // should never happen
     stringstream buffer;

@@ -36,7 +36,8 @@
 #include <string>
 #include <vector>
 
-#include "base/init.h"
+#include "base/clock.h"
+#include "base/flags.h"
 #include "base/logging.h"
 #include "base/port.h"
 #include "base/process.h"
@@ -44,6 +45,7 @@
 #include "base/stopwatch.h"
 #include "base/util.h"
 #include "composer/table.h"
+#include "config/character_form_manager.h"
 #include "config/config_handler.h"
 #include "dictionary/user_dictionary_session_handler.h"
 #include "engine/engine_interface.h"
@@ -141,7 +143,7 @@ bool IsCarrierEmoji(const string &utf8_str) {
 SessionHandler::SessionHandler(EngineInterface *engine)
     : is_available_(false),
       max_session_size_(0),
-      last_session_empty_time_(Util::GetTime()),
+      last_session_empty_time_(Clock::GetTime()),
       last_cleanup_time_(0),
       last_create_session_time_(0),
       engine_(engine),
@@ -222,11 +224,6 @@ bool SessionHandler::StartWatchDog() {
 #endif  // MOZC_DISABLE_SESSION_WATCHDOG
 }
 
-void SessionHandler::ReloadSession() {
-  observer_handler_->Reload();
-  ReloadConfig();
-}
-
 void SessionHandler::ReloadConfig() {
   const composer::Table *table = table_manager_->GetTable(
       *request_, config::ConfigHandler::GetConfig());
@@ -250,7 +247,7 @@ bool SessionHandler::SyncData(commands::Command *command) {
 bool SessionHandler::Shutdown(commands::Command *command) {
   VLOG(1) << "Shutdown server";
   SyncData(command);
-  ReloadSession();   // for saving log_commands
+  ReloadConfig();   // for saving log_commands
   is_available_ = false;
   UsageStats::IncrementCount("ShutDown");
   return true;
@@ -258,9 +255,10 @@ bool SessionHandler::Shutdown(commands::Command *command) {
 
 bool SessionHandler::Reload(commands::Command *command) {
   VLOG(1) << "Reloading server";
-  ReloadSession();
+  ReloadConfig();
   engine_->Reload();
-  RunReloaders();  // call all reloaders defined in .cc file
+  config::CharacterFormManager::GetCharacterFormManager()->ReloadConfig(
+      config::ConfigHandler::GetConfig());
   return true;
 }
 
@@ -595,7 +593,7 @@ bool SessionHandler::CreateSession(commands::Command *command) {
   const int create_session_minimum_interval =
       max(0, min(FLAGS_create_session_min_interval, 10));
 
-  uint64 current_time = Util::GetTime();
+  uint64 current_time = Clock::GetTime();
   if (last_create_session_time_ != 0 &&
       (current_time - last_create_session_time_) <
       create_session_minimum_interval) {
@@ -641,7 +639,7 @@ bool SessionHandler::CreateSession(commands::Command *command) {
     session->set_application_info(command->input().application_info());
 #ifdef __native_client__
     if (command->input().application_info().has_timezone_offset()) {
-      Util::SetTimezoneOffset(
+      Clock::SetTimezoneOffset(
           command->input().application_info().timezone_offset());
     }
 #endif  // __native_client__
@@ -673,7 +671,7 @@ bool SessionHandler::DeleteSession(commands::Command *command) {
 // no active session and client doesn't send any conversion
 // request to the server for FLAGS_timeout sec.
 bool SessionHandler::Cleanup(commands::Command *command) {
-  const uint64 current_time = Util::GetTime();
+  const uint64 current_time = Clock::GetTime();
 
   // suspend/hibernation may happen
   uint64 suspend_time = 0;
@@ -794,7 +792,7 @@ bool SessionHandler::DeleteSessionID(SessionID id) {
   // if session gets empty, save the timestamp
   if (last_session_empty_time_ == 0 &&
       session_map_->Size() == 0) {
-    last_session_empty_time_ = Util::GetTime();
+    last_session_empty_time_ = Clock::GetTime();
   }
 
   return true;

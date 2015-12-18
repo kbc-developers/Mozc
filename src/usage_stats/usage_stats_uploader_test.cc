@@ -39,6 +39,7 @@
 #include <utility>
 #include <vector>
 
+#include "base/clock.h"
 #include "base/port.h"
 #include "base/singleton.h"
 #include "base/system_util.h"
@@ -93,7 +94,7 @@ class TestHTTPClient : public HTTPClientInterface {
     Util::SplitStringUsing(data, "&", &data_set);
     for (size_t i = 0; i < expected_data_.size(); ++i) {
       vector<string>::const_iterator itr =
-          find(data_set.begin(), data_set.end(), expected_data_[i]);
+          std::find(data_set.begin(), data_set.end(), expected_data_[i]);
       const bool found = (itr != data_set.end());
       // we can't compile EXPECT_NE(itr, data_set.end()), so we use EXPECT_TRUE
       EXPECT_TRUE(found) << expected_data_[i];
@@ -191,11 +192,12 @@ class UsageStatsUploaderTest : public ::testing::Test {
 
   void SetValidResult() {
     vector<pair<string, string> > params;
-    params.push_back(make_pair("sourceid", "ime"));
-    params.push_back(make_pair("hl", "ja"));
-    params.push_back(make_pair("v", Version::GetMozcVersion()));
-    params.push_back(make_pair("client_id", kTestClientId));
-    params.push_back(make_pair("os_ver", SystemUtil::GetOSVersionString()));
+    params.push_back(std::make_pair("sourceid", "ime"));
+    params.push_back(std::make_pair("hl", "ja"));
+    params.push_back(std::make_pair("v", Version::GetMozcVersion()));
+    params.push_back(std::make_pair("client_id", kTestClientId));
+    params.push_back(
+        std::make_pair("os_ver", SystemUtil::GetOSVersionString()));
 #ifdef OS_ANDROID
     params.push_back(
         make_pair("model",
@@ -216,7 +218,7 @@ class UsageStatsUploaderTest : public ::testing::Test {
 };
 
 TEST_F(UsageStatsUploaderTest, SendTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kOneDaySec;
   SetUpMetaData(last_upload_sec);
   SetValidResult();
@@ -238,7 +240,7 @@ TEST_F(UsageStatsUploaderTest, SendTest) {
 }
 
 TEST_F(UsageStatsUploaderTest, FirstTimeSendTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   // Don't call SetUpMetaData()..
   SetValidResult();
 
@@ -262,7 +264,7 @@ TEST_F(UsageStatsUploaderTest, FirstTimeSendTest) {
 }
 
 TEST_F(UsageStatsUploaderTest, SendFailTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kHalfDaySec;
   SetUpMetaData(last_upload_sec);
   SetValidResult();
@@ -278,7 +280,7 @@ TEST_F(UsageStatsUploaderTest, SendFailTest) {
 }
 
 TEST_F(UsageStatsUploaderTest, InvalidLastUploadTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   // future time
   // for example: time zone has changed
   const uint32 invalid_sec = current_sec + kHalfDaySec;
@@ -297,7 +299,7 @@ TEST_F(UsageStatsUploaderTest, InvalidLastUploadTest) {
 }
 
 TEST_F(UsageStatsUploaderTest, MozcVersionMismatchTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kOneDaySec;
   SetUpMetaDataWithMozcVersion(last_upload_sec, "invalid_mozc_version");
   SetValidResult();
@@ -332,7 +334,7 @@ class TestStorage: public storage::StorageInterface {
 };
 
 TEST_F(UsageStatsUploaderTest, SaveMetadataFailTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kOneDaySec;
   const string current_version = Version::GetMozcVersion();
   SetUpMetaData(last_upload_sec);
@@ -365,7 +367,7 @@ TEST_F(UsageStatsUploaderTest, SaveMetadataFailTest) {
 }
 
 TEST_F(UsageStatsUploaderTest, UploadFailTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kOneDaySec;
   SetUpMetaData(last_upload_sec);
   SetValidResult();
@@ -390,7 +392,7 @@ TEST_F(UsageStatsUploaderTest, UploadFailTest) {
 }
 
 TEST_F(UsageStatsUploaderTest, UploadRetryTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kOneDaySec;
   SetUpMetaData(last_upload_sec);
   SetValidResult();
@@ -427,7 +429,7 @@ TEST_F(UsageStatsUploaderTest, UploadRetryTest) {
 }
 
 TEST_F(UsageStatsUploaderTest, UploadDataTest) {
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kOneDaySec;
   SetUpMetaData(last_upload_sec);
   SetValidResult();
@@ -436,22 +438,6 @@ TEST_F(UsageStatsUploaderTest, UploadDataTest) {
   const string win64 = (string("WindowsX64:b=")
                         + (SystemUtil::IsWindowsX64()? "t" : "f"));
   client_.AddExpectedData(win64);
-  int major, minor, build, revision;
-  const wchar_t kDllName[] = L"msctf.dll";
-  wstring path = SystemUtil::GetSystemDir();
-  path += L"\\";
-  path += kDllName;
-  if (SystemUtil::GetFileVersion(path, &major, &minor, &build, &revision)) {
-    client_.AddExpectedData(Util::StringPrintf("MsctfVerMajor:i=%d", major));
-    client_.AddExpectedData(Util::StringPrintf("MsctfVerMinor:i=%d", minor));
-    client_.AddExpectedData(Util::StringPrintf("MsctfVerBuild:i=%d", build));
-    client_.AddExpectedData(Util::StringPrintf("MsctfVerRevision:i=%d",
-                                               revision));
-  } else {
-    LOG(ERROR) << "get file version for msctf.dll failed";
-  }
-  client_.AddExpectedData(
-      string("CuasEnabled:b=") + (WinUtil::IsCuasEnabled() ? "t" : "f"));
 #endif
   client_.AddExpectedData(Util::StringPrintf("%s:c=%u", kCountStatsKey,
                                              kCountStatsDefaultValue));
@@ -493,7 +479,7 @@ void SetEventStats(
 
 TEST_F(UsageStatsUploaderTest, UploadTouchEventStats) {
   // save last_upload
-  const uint32 current_sec = static_cast<uint32>(Util::GetTime());
+  const uint32 current_sec = static_cast<uint32>(Clock::GetTime());
   const uint32 last_upload_sec = current_sec - kOneDaySec;
   SetUpMetaData(last_upload_sec);
   SetValidResult();

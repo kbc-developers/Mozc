@@ -35,6 +35,7 @@
 #include <limits>
 #include <string>
 
+#include "base/flags.h"
 #include "base/logging.h"
 #include "base/port.h"
 #include "base/text_normalizer.h"
@@ -46,6 +47,7 @@
 #include "converter/segments.h"
 #include "protocol/commands.pb.h"
 #include "protocol/config.pb.h"
+#include "request/conversion_request.h"
 #include "session/internal/candidate_list.h"
 #include "session/internal/session_output.h"
 #include "session/session_usage_stats_util.h"
@@ -942,8 +944,8 @@ void SessionConverter::ResizeSegmentWidth(const composer::Composer &composer,
   // Clears selected index of a focused segment and trailing segments.
   // TODO(hsumita): Keep the indices if the segment type is FIXED_VALUE.
   selected_candidate_indices_.resize(segments_->conversion_segments_size());
-  fill(selected_candidate_indices_.begin() + segment_index_ + 1,
-       selected_candidate_indices_.end(), 0);
+  std::fill(selected_candidate_indices_.begin() + segment_index_ + 1,
+            selected_candidate_indices_.end(), 0);
   UpdateSelectedCandidateIndex();
 }
 
@@ -1115,13 +1117,11 @@ void SessionConverter::FillOutput(
       candidate_list_visible_) {
     FillCandidates(output->mutable_candidates());
   }
-#ifndef __native_client__
+
   // All candidate words
-  // In NaCl, we don't use the all candidate word data.
   if (CheckState(SUGGESTION | PREDICTION | CONVERSION)) {
     FillAllCandidateWords(output->mutable_all_candidate_words());
   }
-#endif  // __native_client__
 }
 
 // static

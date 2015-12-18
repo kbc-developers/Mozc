@@ -34,10 +34,10 @@
 #ifndef MOZC_DICTIONARY_SYSTEM_VALUE_DICTIONARY_H_
 #define MOZC_DICTIONARY_SYSTEM_VALUE_DICTIONARY_H_
 
+#include <memory>
 #include <string>
 
 #include "base/port.h"
-#include "base/scoped_ptr.h"
 #include "base/string_piece.h"
 #include "dictionary/dictionary_interface.h"
 #include "storage/louds/louds_trie.h"
@@ -62,14 +62,18 @@ class ValueDictionary : public DictionaryInterface {
   // Implementation of DictionaryInterface
   virtual bool HasKey(StringPiece key) const;
   virtual bool HasValue(StringPiece value) const;
-  virtual void LookupPredictive(
-      StringPiece key, bool use_kana_modifier_insensitive_lookup,
-      Callback *callback) const;
-  virtual void LookupPrefix(
-      StringPiece key, bool use_kana_modifier_insensitive_lookup,
-      Callback *callback) const;
-  virtual void LookupExact(StringPiece key, Callback *callback) const;
-  virtual void LookupReverse(StringPiece str, Callback *callback) const;
+  virtual void LookupPredictive(StringPiece key,
+                                const ConversionRequest &conversion_request,
+                                Callback *callback) const;
+  virtual void LookupPrefix(StringPiece key,
+                            const ConversionRequest &conversion_request,
+                            Callback *callback) const;
+  virtual void LookupExact(StringPiece key,
+                           const ConversionRequest &conversion_request,
+                           Callback *callback) const;
+  virtual void LookupReverse(StringPiece str,
+                             const ConversionRequest &conversion_request,
+                             Callback *callback) const;
 
  private:
   explicit ValueDictionary(const POSMatcher& pos_matcher);
@@ -77,7 +81,7 @@ class ValueDictionary : public DictionaryInterface {
   bool OpenDictionaryFile();
 
   storage::louds::LoudsTrie value_trie_;
-  scoped_ptr<DictionaryFile> dictionary_file_;
+  std::unique_ptr<DictionaryFile> dictionary_file_;
   const SystemDictionaryCodecInterface *codec_;
   const uint16 suggestion_only_word_id_;
 
