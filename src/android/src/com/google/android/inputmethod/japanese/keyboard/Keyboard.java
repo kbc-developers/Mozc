@@ -213,6 +213,37 @@ public class Keyboard {
         false,
         CrossingEdgeBehavior.DO_NOTHING),
 
+    // QWERTY keyboard2.
+    QWERTY123_KANA(
+        new KeyboardSpecificationName("QWERTY123_KANA", 0, 1, 0),
+        R.xml.kbd_qwerty123_kana,
+        false,
+        CompositionMode.HIRAGANA,
+        SpecialRomanjiTable.QWERTY_MOBILE_TO_HIRAGANA,
+        SpaceOnAlphanumeric.SPACE_OR_CONVERT_KEEPING_COMPOSITION,
+        false,
+        CrossingEdgeBehavior.DO_NOTHING),
+
+    QWERTY123_ALPHABET(
+        new KeyboardSpecificationName("QWERTY123_ALPHABET", 0, 1, 0),
+        R.xml.kbd_qwerty123_abc,
+        false,
+        CompositionMode.HALF_ASCII,
+        SpecialRomanjiTable.QWERTY_MOBILE_TO_HALFWIDTHASCII,
+        SpaceOnAlphanumeric.COMMIT,
+        false,
+        CrossingEdgeBehavior.COMMIT_WITHOUT_CONSUMING),
+
+    QWERTY123_ALPHABET_NUMBER(
+        new KeyboardSpecificationName("QWERTY123_ALPHABET_NUMBER", 0, 1, 0),
+        R.xml.kbd_qwerty123_abc_123,
+        false,
+        CompositionMode.HALF_ASCII,
+        SpecialRomanjiTable.QWERTY_MOBILE_TO_HALFWIDTHASCII,
+        SpaceOnAlphanumeric.COMMIT,
+        false,
+        CrossingEdgeBehavior.COMMIT_WITHOUT_CONSUMING),
+
     ;
 
     private final KeyboardSpecificationName specName;

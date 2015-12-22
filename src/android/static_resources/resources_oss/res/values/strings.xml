@@ -100,9 +100,11 @@
         <string name="pref_keyboard_layout_description" translation_description="(47) in http://goo.gl/jLDD7P">Switch keyboard layout.</string>
             <string name="pref_keyboard_layout_title_12keys" translation_description="(48) in http://goo.gl/jLDD7P">12 keys</string>
             <string name="pref_keyboard_layout_title_qwerty" translation_description="(49) in http://goo.gl/jLDD7P">QWERTY</string>
+            <string name="pref_keyboard_layout_title_qwerty123">QWERTY123</string>
             <string name="pref_keyboard_layout_title_godan" translation_description="(50) in http://goo.gl/jLDD7P">Godan Keyboard</string>
             <string name="pref_keyboard_layout_description_12keys" translation_description="(51) in http://goo.gl/jLDD7P">Mobile phone layout.</string>
             <string name="pref_keyboard_layout_description_qwerty" translation_description="(52) in http://goo.gl/jLDD7P">PC keyboard layout.</string>
+            <string name="pref_keyboard_layout_description_qwerty123" translation_description="(52) in http://goo.gl/jLDD7P">PC keyboard layout with numbers.</string>
             <string name="pref_keyboard_layout_description_godan" translation_description="(53) in http://goo.gl/jLDD7P">Romaji-dedicated layout. <![CDATA[<a href=\'http://support.google.com/ime/japanese/bin/answer.py?hl=ja&topic=25606&answer=2700298\'>Usage</a>]]></string>
         <string name="pref_input_style_setting_description" translation_description="(54) in http://goo.gl/jLDD7P">Select input style.</string>
         <string name="pref_qwerty_layout_for_alphabet_description" translation_description="(55) in http://goo.gl/jLDD7P">If checked, QWERTY layout will be used for alphabet input mode regardless of main layout.</string>

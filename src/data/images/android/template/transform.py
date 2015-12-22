@@ -443,6 +443,30 @@ def GenerateQwertyAlphabetKeyDefinitions():
         'support': support})
   return key_definitions
 
+def GenerateQwerty123AlphabetKeyDefinitions():
+  """Returns key definitions for qwerty alphabet keys."""
+  key_definitions = []
+  key_definitions.append({'name': 'latin_capital_letter_raw_q','char': 'Q'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_w','char': 'W'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_e','char': 'E'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_r','char': 'R'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_t','char': 'T'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_y','char': 'Y'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_u','char': 'U'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_i','char': 'I'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_o','char': 'O'})
+  key_definitions.append({'name': 'latin_capital_letter_raw_p','char': 'P'})
+  key_definitions.append({'name': 'latin_small_letter_raw_q', 'char': 'q'})
+  key_definitions.append({'name': 'latin_small_letter_raw_w', 'char': 'w'})
+  key_definitions.append({'name': 'latin_small_letter_raw_e', 'char': 'e'})
+  key_definitions.append({'name': 'latin_small_letter_raw_r', 'char': 'r'})
+  key_definitions.append({'name': 'latin_small_letter_raw_t', 'char': 't'})
+  key_definitions.append({'name': 'latin_small_letter_raw_y', 'char': 'y'})
+  key_definitions.append({'name': 'latin_small_letter_raw_u', 'char': 'u'})
+  key_definitions.append({'name': 'latin_small_letter_raw_i', 'char': 'i'})
+  key_definitions.append({'name': 'latin_small_letter_raw_o', 'char': 'o'})
+  key_definitions.append({'name': 'latin_small_letter_raw_p', 'char': 'p'})
+  return key_definitions
 
 def GenerateTwelvekeysAlphabetKeyDefinitions():
   """Returns key definitions for qwerty alphabet keys."""
@@ -588,6 +612,21 @@ def Transform(input_dir, output_dir):
       'qwerty__popup',
       output_dir,
       [x for x in qwerty_definitions if x.get('support', '')])
+
+  qwerty123_definitions = (
+      _QWERTY_KEYICON_KEY_DEFINITIONS + GenerateQwerty123AlphabetKeyDefinitions())
+
+  WriteKeys(
+      os.path.join(input_dir, 'qwerty__keyicon__template.svg'),
+      'qwerty__keyicon',
+      output_dir,
+      qwerty123_definitions)
+
+  WriteKeys(
+      os.path.join(input_dir, 'qwerty__popup__template.svg'),
+      'qwerty__popup',
+      output_dir,
+      [x for x in qwerty123_definitions if x.get('support', '')])
 
   WriteKeys(
       os.path.join(input_dir, 'twelvekeys__popup__template.svg'),

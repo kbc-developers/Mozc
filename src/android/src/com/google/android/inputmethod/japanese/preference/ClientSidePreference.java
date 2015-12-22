@@ -59,7 +59,10 @@ public class ClientSidePreference {
   public enum KeyboardLayout {
     TWELVE_KEYS(1),
     QWERTY(2),
-    GODAN(3),
+    QWERTY123(3),
+    GODAN(4),
+    
+
     ;
 
     // ID for usage stats.
