@@ -120,14 +120,18 @@ public class MenuDialog {
         return;
       }
 
-      if (indexToIdTable[which] == R.string.menu_item_input_method) {
-        listener.get().onShowInputMethodPickerSelected(context);
-      }else if (indexToIdTable[which] == R.string.menu_item_preferences) {
-        listener.get().onLaunchPreferenceActivitySelected(context);
-      }else if (indexToIdTable[which] == R.string.menu_item_mushroom) {
-        listener.get().onShowMushroomSelectionDialogSelected(context);
-      } else {
-        MozcLog.e("Unknown menu index: " + which);
+      switch (indexToIdTable[which]) {
+        case R.string.menu_item_input_method:
+          listener.get().onShowInputMethodPickerSelected(context);
+          break;
+        case R.string.menu_item_preferences:
+          listener.get().onLaunchPreferenceActivitySelected(context);
+          break;
+        case R.string.menu_item_mushroom:
+          listener.get().onShowMushroomSelectionDialogSelected(context);
+          break;
+        default:
+          MozcLog.e("Unknown menu index: " + which);
       }
     }
   }
