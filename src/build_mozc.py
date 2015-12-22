@@ -410,6 +410,13 @@ def ParseGypOptions(args=None, values=None):
                     help='[Android build only] A path to the Android NDK Home. '
                     'If not specified, automatically detected from PATH.')
 
+  parser.add_option('--android_hide_icon', dest='android_hide_icon',
+                    type='choice',
+                    choices=('0', '1'),
+                    default='0',
+                    help='[Android build only] android_hide_icon. '
+                    '0:standalone, 1:preinstall')
+
   # NaCl
   parser.add_option('--nacl_sdk_root', dest='nacl_sdk_root', default='',
                     help='A path to the root directory of Native Client SDK. '
@@ -743,6 +750,8 @@ def GypMain(options, unused_args, _):
   gyp_options.extend(['-D', 'android_ndk_home=%s' % android_ndk_home])
   gyp_options.extend(['-D', 'android_application_id=%s' %
                       options.android_application_id])
+  gyp_options.extend(['-D', 'android_hide_icon=%s' %
+                      options.android_hide_icon])
   gyp_options.extend(['-D', 'build_base=%s' %
                       GetBuildBaseName(options, target_platform)])
   gyp_options.extend(['-D', 'build_short_base=%s' %
