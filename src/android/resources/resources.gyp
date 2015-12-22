@@ -68,6 +68,17 @@
         'original_sdk_resources_dir': '<(static_resources_dir)/resources',
       },
     }, {  # 'branding!="GoogleJapaneseInput"'
+      'conditions': [
+        ['android_hide_icon==1', {
+          'variables': {
+            'launcher_icon_bools': '<(static_resources_dir)/launcher_icon_resources/launcher_icon_preinstall_bools.xml',
+          },
+        }, { # else
+          'variables': {
+            'launcher_icon_bools': '<(static_resources_dir)/launcher_icon_resources/launcher_icon_standard_bools.xml',
+          },
+        }],
+      ],
       'variables': {
         'launcher_icon_bools': '<(static_resources_dir)/launcher_icon_resources/launcher_icon_standard_bools.xml',
         'original_sdk_resources_dir': '<(static_resources_dir)/resources_oss',
