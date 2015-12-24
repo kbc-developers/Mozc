@@ -80,7 +80,6 @@
         }],
       ],
       'variables': {
-        'launcher_icon_bools': '<(static_resources_dir)/launcher_icon_resources/launcher_icon_standard_bools.xml',
         'original_sdk_resources_dir': '<(static_resources_dir)/resources_oss',
         'application_icon_dir': '<(static_resources_dir)/application_icon/oss_icon/',
       },
