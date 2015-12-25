@@ -2,7 +2,7 @@
 
 #copy files
 mozc_src_dir=../src
-package_dir=./android_package/android_packages_inputmethods_Mozc
+package_dir=./android_packages_inputmethods_Mozc
 
 cp -f $mozc_src_dir/android/assets/* $package_dir/assets/
 cp -f $mozc_src_dir/android/libs/*.jar $package_dir/libs/
