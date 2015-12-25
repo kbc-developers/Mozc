@@ -28,7 +28,3 @@
 [submodule "src/third_party/zlib/v1_2_8"]
 	path = src/third_party/zlib/v1_2_8
 	url = https://github.com/madler/zlib.git
-[submodule "android_package"]
-	path = android_package
-	url = https://github.com/kbc-developers/android_packages_inputmethods_Mozc.git
-	branch = cm-13.0
