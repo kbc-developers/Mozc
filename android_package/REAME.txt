@@ -1,0 +1,60 @@
+how to sync android package
+　
+------------------------------------------------
+About the directory structure
+------------------------------------------------
+
+Base_dir
+│  
+├─android_package
+│  │  prepare_android_package.sh
+│  │  copy_preinstall.sh
+│  │  
+│  ├─standalone_release_tools
+│  │    <abbreviated>
+│  └─android_packages_inputmethods_Mozc : <submodule to https://github.com/kbc-developers/android_packages_inputmethods_Mozc.git>
+│                                      
+├─docker
+│  ├─ubuntu14.04
+│  │      enter-buildenv.sh
+│  │      enter-buildenv_with_mount.sh
+│  │      make-buildenv.sh
+│  │      clobber-make-buildenv.sh
+│  │      Dockerfile
+│  │      
+│  └─fedora23
+│        <abbreviated>
+├─doc
+│   <abbreviated>
+└─src
+    <abbreviated>
+
+------------------------------------------------
+how to sync android package
+------------------------------------------------
+1. cd to Base_dir/docker/ubuntu14.04
+
+2. run enter-buildenv_with_mount.sh
+
+In docker shell
+3. cd to ../android_package  (to Base_dir/android_package)
+
+4. run prepare_android_package.sh
+  it will start build
+  after build is success,
+  The new files will be copy to Base_dir/android_package/android_packages_inputmethods_Mozc
+
+5. exit docker (or run new terminal)
+
+6. cd to Base_dir/android_package/android_packages_inputmethods_Mozc
+
+7. commit changes ( and push, if need )
+
+8. cd to Base_dir
+
+9. commit changes of submodule revision ( and push, if need )
+
+
+
+
+
