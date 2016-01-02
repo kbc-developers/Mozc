@@ -1,4 +1,4 @@
-// Copyright 2010-2015, Google Inc.
+// Copyright 2010-2016, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 
 // TODO(horo): write tests.
 
-#ifdef __native_client__
+#ifdef OS_NACL
 
 #include <ppapi/cpp/instance.h>
 #include <ppapi/cpp/module.h>
@@ -485,4 +485,4 @@ Module *CreateModule() {
 
 }  // namespace pp
 
-#endif  // __native_client__
+#endif  // OS_NACL

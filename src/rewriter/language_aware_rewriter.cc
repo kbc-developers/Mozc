@@ -1,4 +1,4 @@
-// Copyright 2010-2015, Google Inc.
+// Copyright 2010-2016, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -115,6 +115,15 @@ bool IsRawQuery(const composer::Composer &composer,
   string composition;
   composer.GetStringForPreedit(&composition);
   if (composition == raw_text) {
+    return false;
+  }
+
+  // If the composition string is the full width form of the raw_text,
+  // there is no need to add the candidate to suggestions.
+  string composition_in_half_width_ascii;
+  Util::FullWidthAsciiToHalfWidthAscii(composition,
+                                       &composition_in_half_width_ascii);
+  if (composition_in_half_width_ascii == raw_text) {
     return false;
   }
 

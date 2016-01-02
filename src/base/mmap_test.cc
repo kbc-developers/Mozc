@@ -1,4 +1,4 @@
-// Copyright 2010-2015, Google Inc.
+// Copyright 2010-2016, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -118,13 +118,13 @@ TEST(MmapTest, MacMaybeMLockTest) {
 TEST(MmapTest, LinuxMaybeMLockTest) {
   size_t data_len = 32;
   void *addr = malloc(data_len);
-#if defined(OS_ANDROID) || defined(__native_client__)
+#if defined(OS_ANDROID) || defined(OS_NACL)
   EXPECT_EQ(-1, Mmap::MaybeMLock(addr, data_len));
   EXPECT_EQ(-1, Mmap::MaybeMUnlock(addr, data_len));
-#else
+#else  // defined(OS_ANDROID) || defined(OS_NACL)
   EXPECT_EQ(0, Mmap::MaybeMLock(addr, data_len));
   EXPECT_EQ(0, Mmap::MaybeMUnlock(addr, data_len));
-#endif  // defined(OS_ANDROID) || defined(__native_client__)
+#endif  // defined(OS_ANDROID) || defined(OS_NACL)
   free(addr);
 }
 #endif  // OS_WIN, OS_MACOSX, else.

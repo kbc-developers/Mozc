@@ -1,4 +1,4 @@
-// Copyright 2010-2015, Google Inc.
+// Copyright 2010-2016, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -232,9 +232,9 @@ void Session::InitContext(ImeContext *context) const {
 
   context->SetConfig(&context->GetConfig());
 
-#ifdef OS_LINUX
+#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_NACL)
   context->mutable_converter()->set_use_cascading_window(false);
-#endif
+#endif  // OS_LINUX || OS_ANDROID || OS_NACL
 }
 
 

@@ -1,4 +1,4 @@
-// Copyright 2010-2015, Google Inc.
+// Copyright 2010-2016, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
 #ifndef MOZC_CHROME_NACL_DICTIONARY_DOWNLOADER_H_
 #define MOZC_CHROME_NACL_DICTIONARY_DOWNLOADER_H_
 
-#ifdef __native_client__
+#ifdef OS_NACL
 
 #include <memory>
 #include <string>
@@ -77,6 +77,6 @@ class DictionaryDownloader {
 }  // namespace chrome
 }  // namespace mozc
 
-#endif  // __native_client__
+#endif  // OS_NACL
 
 #endif  // MOZC_CHROME_NACL_DICTIONARY_DOWNLOADER_H_

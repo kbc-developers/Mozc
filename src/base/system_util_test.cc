@@ -1,4 +1,4 @@
-// Copyright 2010-2015, Google Inc.
+// Copyright 2010-2016, Google Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -98,11 +98,11 @@ TEST_F(SystemUtilTest, GetFileVersionStringTest) {
 }
 #endif  // OS_WIN
 
-#ifndef __native_client__
+#ifndef OS_NACL
 TEST_F(SystemUtilTest, GetTotalPhysicalMemoryTest) {
   EXPECT_GT(SystemUtil::GetTotalPhysicalMemory(), 0);
 }
-#endif  // __native_client__
+#endif  // OS_NACL
 
 #ifdef OS_ANDROID
 TEST_F(SystemUtilTest, GetOSVersionStringTestForAndroid) {
