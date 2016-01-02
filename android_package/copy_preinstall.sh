@@ -21,7 +21,7 @@ cp -R $mozc_src_dir/android/src/com $package_dir/src/
 rm -rf $package_dir/src/org
 cp -R $mozc_src_dir/android/gen_for_adt/org $package_dir/src/
 
-cp -f $mozc_src_dir/android/AndroidManifest.xml $package_dir/
+cp -f $mozc_src_dir/android/bin/AndroidManifest.xml $package_dir/
 cp -f $mozc_src_dir/android/ant.properties $package_dir/
 cp -f $mozc_src_dir/android/build.xml $package_dir/
 cp -f $mozc_src_dir/android/proguard-project.txt $package_dir/
