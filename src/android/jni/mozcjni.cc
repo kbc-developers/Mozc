@@ -88,10 +88,8 @@ void Initialize(
   // First of all, set the user profile directory.
   SystemUtil::SetUserProfileDirectory(user_profile_directory);
 
-#ifdef GOOGLE_JAPANESE_INPUT_BUILD
   // Initialize Java native callback proxy.
   JavaHttpClientProxy::SetJavaVM(vm);
-#endif // GOOGLE_JAPANESE_INPUT_BUILD
 
   // Initialize dictionary data.
   DataManagerType::SetDictionaryData(dictionary_address, dictionary_size);
@@ -207,9 +205,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 }
 
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
-#ifdef GOOGLE_JAPANESE_INPUT_BUILD
   mozc::jni::JavaHttpClientProxy::SetJavaVM(NULL);
-#endif // GOOGLE_JAPANESE_INPUT_BUILD
 
   // Delete global references.
   JNIEnv *env = mozc::AndroidUtil::GetEnv(vm);
