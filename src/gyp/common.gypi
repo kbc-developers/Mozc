@@ -226,19 +226,13 @@
     # This option is only for Linux.
     # You should not set this flag if you want to use "dlopen" to
     # load Mozc's modules. See
-    # - http://code.google.com/p/mozc/issues/detail?id=14
-    # - http://code.google.com/p/protobuf/issues/detail?id=128
-    # - http://code.google.com/p/protobuf/issues/detail?id=370
+    # - https://github.com/google/mozc/issues/14
     # for the background information.
     'use_libprotobuf%': 0,
 
     # Set '1' to use system-instaleld zinnia library.  Otherwise
     # zinnia will be built from source as needed.
     'use_libzinnia%': 0,
-
-    # use_libxml represents if libxml library is used or not.
-    # This option is only for Linux.
-    'use_libxml%': 1,
 
     # use_libibus represents if ibus library is used or not.
     # This option is only for Linux.

@@ -10,6 +10,7 @@ We only support OS X 10.7 or later intel only.
 Building on Mac requires the following software.
 
   * Xcode
+  * [Ninja](https://github.com/ninja-build/ninja)
 
 If you don't need to run gui tools like about dialog, config dialog, or dictionary tool, you can omit installing Qt.  Candidate window still shows without Qt.  See below for the detailed information.
 
@@ -20,7 +21,7 @@ You can download Mozc source code as follows:
 ```
 mkdir -p ~/work
 cd ~/work
-git clone https://github.com/google/mozc.git --recursive
+git clone https://github.com/google/mozc.git -b master --single-branch --recursive
 ```
 
 # Compilation
